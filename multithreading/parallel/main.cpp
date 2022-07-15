@@ -1,18 +1,15 @@
 #include "def.h"
-// int rows;
+
 int rows;
 int cols;
 vector<vector<Pixcel>> Pixcels;
 
-
-void getPixlesFromBMP24(int end, int rows, int cols, char *fileReadBuffer)
+void getPixlesFromBMP24(int end, int rows, int cols, char *fileReadBuffer, Image *image)
 {
   int count = 1;
-  //int r_count = 0, b_count = 0, g_count = 0;
   int extra = cols % 4;
   for (int i = 0; i < rows; i++)
   {
-    //count += extra;
     for (int j = cols - 1; j >= 0; j--){
       
       for (int k = 0; k < 3; k++)
@@ -20,13 +17,13 @@ void getPixlesFromBMP24(int end, int rows, int cols, char *fileReadBuffer)
         switch (k)
         {
         case 0: // red 
-          Pixcels[i][j].red = fileReadBuffer[end - count++];
+          image->pixcels.at(i)[j].red = fileReadBuffer[end - count++];
           break;
         case 1: // green
-          Pixcels[i][j].green = fileReadBuffer[end - count++];
+          image->pixcels[i][j].green = fileReadBuffer[end - count++];
           break;
         case 2: // blue
-          Pixcels[i][j].blue = fileReadBuffer[end - count++];
+          image->pixcels[i][j].blue = fileReadBuffer[end - count++];
           break;
         }
       }
@@ -35,7 +32,7 @@ void getPixlesFromBMP24(int end, int rows, int cols, char *fileReadBuffer)
 }
 
 
-void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize)
+void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image *image)
 {
   std::ofstream write(nameOfFileToCreate);
   if (!write)
@@ -54,15 +51,15 @@ void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferS
         switch (k)
         {
         case 0:
-          fileBuffer[bufferSize - count++] = Pixcels[i][j].red;
+          fileBuffer[bufferSize - count++] = image->pixcels[i][j].red;
           // write red value in fileBuffer[bufferSize - count]
           break;
         case 1:
-          fileBuffer[bufferSize - count++] = Pixcels[i][j].green ;
+          fileBuffer[bufferSize - count++] = image->pixcels[i][j].green ;
           // write green value in fileBuffer[bufferSize - count]
           break;
         case 2:
-          fileBuffer[bufferSize - count++] = Pixcels[i][j].blue;
+          fileBuffer[bufferSize - count++] = image->pixcels[i][j].blue;
           // write blue value in fileBuffer[bufferSize - count]
           break;
         }
@@ -143,108 +140,107 @@ int main(int argc, char *argv[])
   char *fileBuffer;
   int bufferSize;
   char *fileName = argv[1];
-/////////////////////////////
-  struct timeval start1,end1;
-  gettimeofday(&start1, NULL);
+
   vector<int> dimensions = fillAndAllocate(fileBuffer, fileName, bufferSize); 
   if (dimensions.size() == 0)
   {
     cout << "File read error" << endl;
     return 1;
   }
-  rows = dimensions[0];
-  cols = dimensions[1];
-  gettimeofday(&end1, NULL);
-  double r = -(start1.tv_sec  + start1.tv_usec * 0.000001) +
-    (end1.tv_sec  + end1.tv_usec * 0.000001);
-  //cout << "duration of fillAndAllocate : " << r << "\n\n\n\n";
+  Image* image = new Image;
+  image->rows = dimensions[0];
+  image->cols = dimensions[1];
+  image->pixcels = vector<vector<Pixcel>>(image->rows, vector<Pixcel>(image->cols));
 ///////////////////////////  
-  Pixcels = vector<vector<Pixcel>>(rows, vector<Pixcel>(cols));
-///////////////////////////
-  struct timeval start2,end2;
-  gettimeofday(&start2, NULL);
-  getPixlesFromBMP24(bufferSize, rows, cols, fileBuffer);
-  gettimeofday(&end2, NULL);
-  r = -(start2.tv_sec  + start2.tv_usec * 0.000001) +
-    (end2.tv_sec  + end2.tv_usec * 0.000001);
-  //cout << "duration of getPixcelFromBMP24 : " << r << "\n\n\n\n";
-////////////////////////////
+  getPixlesFromBMP24(bufferSize, rows, cols, fileBuffer, image);
+  // Pixcels = vector<vector<Pixcel>>(rows, vector<Pixcel>(cols));
+  writeOutBmp24(fileBuffer, "output.bmp", bufferSize, image);
+
+// ///////////////////////////
+//   struct timeval start2,end2;
+//   gettimeofday(&start2, NULL);
+//   getPixlesFromBMP24(bufferSize, rows, cols, fileBuffer);
+//   gettimeofday(&end2, NULL);
+//   r = -(start2.tv_sec  + start2.tv_usec * 0.000001) +
+//     (end2.tv_sec  + end2.tv_usec * 0.000001);
+//   //cout << "duration of getPixcelFromBMP24 : " << r << "\n\n\n\n";
+// ////////////////////////////
 
 
-  struct timeval start3,end3;
-  gettimeofday(&start3, NULL);
+//   struct timeval start3,end3;
+//   gettimeofday(&start3, NULL);
 
-  image_threads[0].first_row = 0; // first quarter
-  image_threads[0].last_row = (rows - 1) / 2;
-  image_threads[0].first_col = 0;
-  image_threads[0].last_col = (cols - 1) / 2;
+//   image_threads[0].first_row = 0; // first quarter
+//   image_threads[0].last_row = (rows - 1) / 2;
+//   image_threads[0].first_col = 0;
+//   image_threads[0].last_col = (cols - 1) / 2;
 
-  image_threads[1].first_row = 0; // second
-  image_threads[1].last_row = (rows - 1) / 2;
-  image_threads[1].first_col = (cols + 1) / 2;
-  image_threads[1].last_col = cols - 1;
+//   image_threads[1].first_row = 0; // second
+//   image_threads[1].last_row = (rows - 1) / 2;
+//   image_threads[1].first_col = (cols + 1) / 2;
+//   image_threads[1].last_col = cols - 1;
 
-  image_threads[2].first_row = (rows + 1) / 2;  // third
-  image_threads[2].last_row = rows - 1;
-  image_threads[2].first_col = (cols + 1) / 2;
-  image_threads[2].last_col = cols - 1;
+//   image_threads[2].first_row = (rows + 1) / 2;  // third
+//   image_threads[2].last_row = rows - 1;
+//   image_threads[2].first_col = (cols + 1) / 2;
+//   image_threads[2].last_col = cols - 1;
 
-  image_threads[3].first_row = (rows + 1) / 2;  // forth
-  image_threads[3].last_row = rows - 1;
-  image_threads[3].first_col = 0;
-  image_threads[3].last_col = (cols - 1) / 2;
+//   image_threads[3].first_row = (rows + 1) / 2;  // forth
+//   image_threads[3].last_row = rows - 1;
+//   image_threads[3].first_col = 0;
+//   image_threads[3].last_col = (cols - 1) / 2;
 
-  int create_result, join_result;
+//   int create_result, join_result;
 
-  for(long i = 0; i < 4; i++){
-    create_result = pthread_create(&main_threads[i], NULL, thread_handler, (void*)i);
-    if(create_result){
-      cout << "Error on create\n";
-      exit(-1);
-    }
-  }
+//   for(long i = 0; i < 4; i++){
+//     create_result = pthread_create(&main_threads[i], NULL, thread_handler, (void*)i);
+//     if(create_result){
+//       cout << "Error on create\n";
+//       exit(-1);
+//     }
+//   }
 
-  for(long i = 0; i < 4; i++){
-    join_result = pthread_join(main_threads[i], NULL);
-    if(join_result){
-      cout << "Error on create\n";
-      exit(-1);
-    }
-  }
-  gettimeofday(&end3, NULL);
-  r = -(start3.tv_sec  + start3.tv_usec * 0.000001) +
-    (end3.tv_sec  + end3.tv_usec * 0.000001);
+//   for(long i = 0; i < 4; i++){
+//     join_result = pthread_join(main_threads[i], NULL);
+//     if(join_result){
+//       cout << "Error on create\n";
+//       exit(-1);
+//     }
+//   }
+//   gettimeofday(&end3, NULL);
+//   r = -(start3.tv_sec  + start3.tv_usec * 0.000001) +
+//     (end3.tv_sec  + end3.tv_usec * 0.000001);
   
-  //cout << "duration of blur and sepia: " << r << "\n\n\n\n";
-////////////////////////////
+//   //cout << "duration of blur and sepia: " << r << "\n\n\n\n";
+// ////////////////////////////
 
-  struct timeval start5,end5;
-  gettimeofday(&start5, NULL);
-  washed_out(rows, cols, Pixcels);
-  gettimeofday(&end5, NULL);
-  r = -(start5.tv_sec  + start5.tv_usec * 0.000001) +
-    (end5.tv_sec  + end5.tv_usec * 0.000001);
-  //cout << "duration of washed out : " << r << "\n\n\n\n";
-////////////////////////////
+//   struct timeval start5,end5;
+//   gettimeofday(&start5, NULL);
+//   washed_out(rows, cols, Pixcels);
+//   gettimeofday(&end5, NULL);
+//   r = -(start5.tv_sec  + start5.tv_usec * 0.000001) +
+//     (end5.tv_sec  + end5.tv_usec * 0.000001);
+//   //cout << "duration of washed out : " << r << "\n\n\n\n";
+// ////////////////////////////
 
  
-  cross(rows, cols, Pixcels);
+//   cross(rows, cols, Pixcels);
   
-////////////////////////////
+// ////////////////////////////
 
-  struct timeval start7,end7;
-  gettimeofday(&start7, NULL);
-  writeOutBmp24(fileBuffer, "output.bmp", bufferSize);
-  gettimeofday(&end7, NULL);
-  r = -(start7.tv_sec  + start7.tv_usec * 0.000001) +
-    (end7.tv_sec  + end7.tv_usec * 0.000001);
+//   struct timeval start7,end7;
+//   gettimeofday(&start7, NULL);
+//   writeOutBmp24(fileBuffer, "output.bmp", bufferSize);
+//   gettimeofday(&end7, NULL);
+//   r = -(start7.tv_sec  + start7.tv_usec * 0.000001) +
+//     (end7.tv_sec  + end7.tv_usec * 0.000001);
   
-  //cout << "duration of writeOutBmp24 : " << r << "\n\n\n\n";
-////////////////////////////
+//   //cout << "duration of writeOutBmp24 : " << r << "\n\n\n\n";
+// ////////////////////////////
   
-  gettimeofday(&enit, NULL);
-  r = (enit.tv_sec  + enit.tv_usec * 0.000001) -
-    (init.tv_sec  + init.tv_usec * 0.000001);
-  cout << "time consumed parallel: " << r << '\n';
+//   gettimeofday(&enit, NULL);
+//   r = (enit.tv_sec  + enit.tv_usec * 0.000001) -
+//     (init.tv_sec  + init.tv_usec * 0.000001);
+//   cout << "time consumed parallel: " << r << '\n';
   return 0;
 }
