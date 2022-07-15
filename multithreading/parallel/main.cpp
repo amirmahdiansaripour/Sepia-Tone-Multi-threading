@@ -4,43 +4,6 @@ int rows;
 int cols;
 vector<vector<Pixcel>> Pixcels;
 
-bool fillAndAllocate(char *&buffer, const char *fileName, int &rows, int &cols, int &bufferSize)
-{
-  std::ifstream file(fileName);
-
-  if (file)
-  {
-    file.seekg(0, std::ios::end);
-    std::streampos length = file.tellg();
-    file.seekg(0, std::ios::beg);
-
-
-
-    buffer = new char[length];
-    file.read(&buffer[0], length);
-
-    PBITMAPFILEHEADER file_header;
-    PBITMAPINFOHEADER info_header;
-
-    file_header = (PBITMAPFILEHEADER)(&buffer[0]);
-    info_header = (PBITMAPINFOHEADER)(&buffer[0] + sizeof(BITMAPFILEHEADER));
-    rows = info_header->biHeight;
-    cols = info_header->biWidth;
-    bufferSize = file_header->bfSize;
-    file.close();
-    return 1;
-  }
-  else
-  {
-    cout << "File" << fileName << " doesn't exist!" << endl;
-    file.close();
-    return 0;
-  }
-}
-
-
-
-
 
 void getPixlesFromBMP24(int end, int rows, int cols, char *fileReadBuffer)
 {
@@ -183,11 +146,14 @@ int main(int argc, char *argv[])
 /////////////////////////////
   struct timeval start1,end1;
   gettimeofday(&start1, NULL);
-  if (!fillAndAllocate(fileBuffer, fileName, rows, cols, bufferSize))
+  vector<int> dimensions = fillAndAllocate(fileBuffer, fileName, bufferSize); 
+  if (dimensions.size() == 0)
   {
     cout << "File read error" << endl;
     return 1;
   }
+  rows = dimensions[0];
+  cols = dimensions[1];
   gettimeofday(&end1, NULL);
   double r = -(start1.tv_sec  + start1.tv_usec * 0.000001) +
     (end1.tv_sec  + end1.tv_usec * 0.000001);

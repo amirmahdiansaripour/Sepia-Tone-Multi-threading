@@ -1,8 +1,8 @@
 
-all: ImageFilters.out main.o sepia.o washed_out.o cross.o
+all: ImageFilters.out main.o sepia.o washed_out.o cross.o bitmap.o
 
-ImageFilters.out: main.o sepia.o washed_out.o cross.o
-	g++ -std=c++11 -pthread main.o sepia.o washed_out.o cross.o -o ImageFilters.out
+ImageFilters.out: main.o sepia.o washed_out.o cross.o bitmap.o
+	g++ -std=c++11 -pthread main.o sepia.o washed_out.o cross.o bitmap.o -o ImageFilters.out
 
 main.o: def.h main.cpp
 	g++ -std=c++11 -pthread -c main.cpp  -o main.o
@@ -16,6 +16,8 @@ washed_out.o : def.h washed_out.cpp
 cross.o : def.h cross.cpp
 	g++ -std=c++11 -pthread -c cross.cpp -o cross.o
 
+bitmap.o : def.h bitmap.cpp
+	g++ -std=c++11 -pthread -c bitmap.cpp -o bitmap.o
 
 clean:
 	rm *.o
