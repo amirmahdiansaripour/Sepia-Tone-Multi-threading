@@ -16,7 +16,11 @@ using std::ofstream;
 using namespace std;
 using namespace std::chrono;
 
-struct Pixcel{
+#pragma pack(1)
+#pragma once
+
+
+typedef struct Pixcel{
   unsigned char green, blue, red;
   Pixcel(unsigned char g_, unsigned char r_, unsigned char b_){
     green = g_;
@@ -28,17 +32,42 @@ struct Pixcel{
     red = 0;
     blue = 0;
   }
-};
+} Pixcel;
 
-typedef struct Pixcel Pixcel;
-
-struct Image_thread{
+typedef struct Image_thread{
   int first_row;
   int first_col;
   int last_row;
   int last_col;
-};
-typedef Image_thread Image_thread;
+} Image_thread;
+
+typedef unsigned short WORD;
+typedef unsigned int DWORD;
+
+typedef struct tagBITMAPFILEHEADER
+{
+  WORD bfType;
+  DWORD bfSize;
+  WORD bfReserved1;
+  WORD bfReserved2;
+  DWORD bfOffBits;
+} BITMAPFILEHEADER, *PBITMAPFILEHEADER;
+
+typedef struct tagBITMAPINFOHEADER
+{
+  DWORD biSize;
+  int biWidth;
+  int biHeight;
+  WORD biPlanes;
+  WORD biBitCount;
+  DWORD biCompression;
+  DWORD biSizeImage;
+  int biXPelsPerMeter;
+  int biYPelsPerMeter;
+  DWORD biClrUsed;
+  DWORD biClrImportant;
+} BITMAPINFOHEADER, *PBITMAPINFOHEADER;
+
 
 
 unsigned char calc_mean(int, int, const string&);
