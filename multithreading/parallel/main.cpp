@@ -1,5 +1,5 @@
 #include "def.h"
-
+// int rows;
 int rows;
 int cols;
 vector<vector<Pixcel>> Pixcels;

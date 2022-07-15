@@ -68,7 +68,7 @@ typedef struct tagBITMAPINFOHEADER
 } BITMAPINFOHEADER, *PBITMAPINFOHEADER;
 
 typedef struct Image{
-  vector<vector<Pixcel>> &pixcels;
+  vector<vector<Pixcel>> pixcels;
   int rows;
   int cols;
 } Image;
