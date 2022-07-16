@@ -1,67 +1,65 @@
 #include "def.h"
 
-vector<vector<Pixcel>> Pixcels;
-
 vector<vector<Pixcel>> raw;
 
-void change_pixcels_blur(int row_range , int col_range){
-  int start_x = row_range - 1;
-  int start_y = col_range - 1;
-  int end_x = row_range + 1;
-  int end_y = col_range + 1;
+// void change_pixcels_blur(int row_range , int col_range){
+//   int start_x = row_range - 1;
+//   int start_y = col_range - 1;
+//   int end_x = row_range + 1;
+//   int end_y = col_range + 1;
   
-  double sum_red = 0, sum_blue = 0, sum_green = 0;
+//   double sum_red = 0, sum_blue = 0, sum_green = 0;
   
-  for(int i = start_x; i <= end_x; i++)
-    for(int j = start_y; j <= end_y;j++){
-      sum_red += (double)(((int)raw[i][j].red) / 9);
-      sum_green += (double)(((int)raw[i][j].green) / 9);
-      sum_blue += (double)(((int)raw[i][j].blue) / 9);
-    }
+//   for(int i = start_x; i <= end_x; i++)
+//     for(int j = start_y; j <= end_y;j++){
+//       sum_red += (double)(((int)raw[i][j].red) / 9);
+//       sum_green += (double)(((int)raw[i][j].green) / 9);
+//       sum_blue += (double)(((int)raw[i][j].blue) / 9);
+//     }
   
-  Pixcels[row_range][col_range].red = (unsigned char)sum_red;
-  Pixcels[row_range][col_range].green = (unsigned char)sum_green;
-  Pixcels[row_range][col_range].blue = (unsigned char)sum_blue;
-}
+//   Pixcels[row_range][col_range].red = (unsigned char)sum_red;
+//   Pixcels[row_range][col_range].green = (unsigned char)sum_green;
+//   Pixcels[row_range][col_range].blue = (unsigned char)sum_blue;
+// }
 
-void sub_blur(int first_row, int last_row, int first_col , int last_col){
-  for(int i = first_row ; i <= last_row ; i++)
-    for(int j = first_col ; j <= last_col; j++)
-      change_pixcels_blur(i, j);
-}
+// void sub_blur(int first_row, int last_row, int first_col , int last_col){
+//   for(int i = first_row ; i <= last_row ; i++)
+//     for(int j = first_col ; j <= last_col; j++)
+//       change_pixcels_blur(i, j);
+// }
 
-void blur(int first_r, int last_r, int first_c, int last_c){
+// void blur(int first_r, int last_r, int first_c, int last_c){
 
-  raw = vector<vector<Pixcel>>(10, vector<Pixcel>(10));
+//   raw = vector<vector<Pixcel>>(10, vector<Pixcel>(10));
   
-  for(int i = 0; i < 10; i++){
-    for(int j = 0; j < 10; j++){
-        raw[i][j] = Pixcels[i][j];
-    }
-  }
+//   for(int i = 0; i < 10; i++){
+//     for(int j = 0; j < 10; j++){
+//         raw[i][j] = Pixcels[i][j];
+//     }
+//   }
   
-  int first_row = (first_r == 0) ? 1 : first_r;  
-  int last_row = (last_r == raw.size() - 1) ? raw.size() - 2 : last_r;
+//   int first_row = (first_r == 0) ? 1 : first_r;  
+//   int last_row = (last_r == raw.size() - 1) ? raw.size() - 2 : last_r;
 
-  int first_col = (first_c == 0) ? 1 : first_c; 
-  int last_col =  (last_c == raw.size() - 1) ? raw.size() - 2 : last_c;
+//   int first_col = (first_c == 0) ? 1 : first_c; 
+//   int last_col =  (last_c == raw.size() - 1) ? raw.size() - 2 : last_c;
 
-  sub_blur(first_row, last_row, first_col , last_col);
-}
+//   sub_blur(first_row, last_row, first_col , last_col);
+// }
 
 pthread_t main_threads[4];
 Image_thread image_threads[4];
 
-void* thread_handler(void* tid){
-  long index = (long)tid;
-  int f_row = image_threads[index].first_row;
-  int l_row = image_threads[index].last_row;
-  int f_col = image_threads[index].first_col;
-  int l_col = image_threads[index].last_col;
-  blur(f_row, l_row, f_col, l_col);
-  sepia(f_row, l_row, f_col, l_col, Pixcels);
-  pthread_exit(NULL);
-}
+// void* thread_handler(void* tid){
+//   long index = (long)tid;
+//   int f_row = image_threads[index].first_row;
+//   int l_row = image_threads[index].last_row;
+//   int f_col = image_threads[index].first_col;
+//   int l_col = image_threads[index].last_col;
+//   blur(f_row, l_row, f_col, l_col);
+//   sepia(f_row, l_row, f_col, l_col, Pixcels);
+//   pthread_exit(NULL);
+// }
 
 int main(int argc, char *argv[])
 {
@@ -78,28 +76,15 @@ int main(int argc, char *argv[])
     cout << "File read error" << endl;
     return 1;
   }
+
   Image* image = new Image;
   image->rows = dimensions[0];
   image->cols = dimensions[1];
   image->pixcels = vector<vector<Pixcel>>(image->rows, vector<Pixcel>(image->cols));
-///////////////////////////  
+  
   getPixlesFromBMP24(bufferSize, fileBuffer, image);
-  // Pixcels = vector<vector<Pixcel>>(rows, vector<Pixcel>(cols));
   writeOutBmp24(fileBuffer, "output.bmp", bufferSize, image, image->rows, image->cols);
 
-// ///////////////////////////
-//   struct timeval start2,end2;
-//   gettimeofday(&start2, NULL);
-//   getPixlesFromBMP24(bufferSize, rows, cols, fileBuffer);
-//   gettimeofday(&end2, NULL);
-//   r = -(start2.tv_sec  + start2.tv_usec * 0.000001) +
-//     (end2.tv_sec  + end2.tv_usec * 0.000001);
-//   //cout << "duration of getPixcelFromBMP24 : " << r << "\n\n\n\n";
-// ////////////////////////////
-
-
-//   struct timeval start3,end3;
-//   gettimeofday(&start3, NULL);
 
 //   image_threads[0].first_row = 0; // first quarter
 //   image_threads[0].last_row = (rows - 1) / 2;
