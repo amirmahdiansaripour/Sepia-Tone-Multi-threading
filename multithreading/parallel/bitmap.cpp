@@ -1,5 +1,73 @@
 #include "def.h"
 
+void getPixlesFromBMP24(int end, char *fileReadBuffer, Image *image)
+{
+  int rows = image->rows;
+  int cols = image->cols;
+  int count = 1;
+  int extra = cols % 4;
+  for (int i = 0; i < rows; i++)
+  {
+    for (int j = cols - 1; j >= 0; j--){
+      
+      for (int k = 0; k < 3; k++)
+      {
+        switch (k)
+        {
+        case 0: // red 
+          image->pixcels.at(i)[j].red = fileReadBuffer[end - count++];
+          break;
+        case 1: // green
+          image->pixcels[i][j].green = fileReadBuffer[end - count++];
+          break;
+        case 2: // blue
+          image->pixcels[i][j].blue = fileReadBuffer[end - count++];
+          break;
+        }
+      }
+    }
+  }
+}
+
+void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image *image, int &rows, int &cols)
+{
+  std::ofstream write(nameOfFileToCreate);
+  if (!write)
+  {
+    cout << "Failed to write " << nameOfFileToCreate << endl;
+    return;
+  }
+  int count = 1;
+  int extra = cols % 4;
+  for (int i = 0; i < rows; i++)
+  {
+    //count += extra;
+    for (int j = cols - 1; j >= 0; j--){
+      for (int k = 0; k < 3; k++)
+      {
+        switch (k)
+        {
+        case 0:
+          fileBuffer[bufferSize - count++] = image->pixcels[i][j].red;
+          // write red value in fileBuffer[bufferSize - count]
+          break;
+        case 1:
+          fileBuffer[bufferSize - count++] = image->pixcels[i][j].green ;
+          // write green value in fileBuffer[bufferSize - count]
+          break;
+        case 2:
+          fileBuffer[bufferSize - count++] = image->pixcels[i][j].blue;
+          // write blue value in fileBuffer[bufferSize - count]
+          break;
+        }
+      }
+    }
+  }
+
+  write.write(fileBuffer, bufferSize);
+  write.close();
+}
+
 vector<int> fillAndAllocate(char *&buffer, const char *fileName, int &bufferSize)
 {
   std::ifstream file(fileName);

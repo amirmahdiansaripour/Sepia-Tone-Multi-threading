@@ -73,6 +73,8 @@ typedef struct Image{
   int cols;
 } Image;
 
+void getPixlesFromBMP24(int end, char *fileReadBuffer, Image *image);
+void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image *image, int &rows, int &cols);
 vector<int> fillAndAllocate(char *&buffer, const char *fileName, int &bufferSize);
 unsigned char calc_mean(int, int, const string&);
 void blur(int first_r, int last_r, int first_c, int last_c);
