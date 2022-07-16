@@ -102,4 +102,3 @@ vector<int> fillAndAllocate(char *&buffer, const char *fileName, int &bufferSize
   }
 }
 
-
