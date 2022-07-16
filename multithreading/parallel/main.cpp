@@ -1,6 +1,75 @@
 #include "def.h"
 
+int rows;
+int cols;
 vector<vector<Pixcel>> Pixcels;
+
+void getPixlesFromBMP24(int end, int rows, int cols, char *fileReadBuffer, Image *image)
+{
+  int count = 1;
+  int extra = cols % 4;
+  for (int i = 0; i < rows; i++)
+  {
+    for (int j = cols - 1; j >= 0; j--){
+      
+      for (int k = 0; k < 3; k++)
+      {
+        switch (k)
+        {
+        case 0: // red 
+          image->pixcels.at(i)[j].red = fileReadBuffer[end - count++];
+          break;
+        case 1: // green
+          image->pixcels[i][j].green = fileReadBuffer[end - count++];
+          break;
+        case 2: // blue
+          image->pixcels[i][j].blue = fileReadBuffer[end - count++];
+          break;
+        }
+      }
+    }
+  }
+}
+
+
+void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image *image)
+{
+  std::ofstream write(nameOfFileToCreate);
+  if (!write)
+  {
+    cout << "Failed to write " << nameOfFileToCreate << endl;
+    return;
+  }
+  int count = 1;
+  int extra = cols % 4;
+  for (int i = 0; i < rows; i++)
+  {
+    //count += extra;
+    for (int j = cols - 1; j >= 0; j--){
+      for (int k = 0; k < 3; k++)
+      {
+        switch (k)
+        {
+        case 0:
+          fileBuffer[bufferSize - count++] = image->pixcels[i][j].red;
+          // write red value in fileBuffer[bufferSize - count]
+          break;
+        case 1:
+          fileBuffer[bufferSize - count++] = image->pixcels[i][j].green ;
+          // write green value in fileBuffer[bufferSize - count]
+          break;
+        case 2:
+          fileBuffer[bufferSize - count++] = image->pixcels[i][j].blue;
+          // write blue value in fileBuffer[bufferSize - count]
+          break;
+        }
+      }
+    }
+  }
+
+  write.write(fileBuffer, bufferSize);
+  write.close();
+}
 
 vector<vector<Pixcel>> raw;
 
@@ -83,9 +152,9 @@ int main(int argc, char *argv[])
   image->cols = dimensions[1];
   image->pixcels = vector<vector<Pixcel>>(image->rows, vector<Pixcel>(image->cols));
 ///////////////////////////  
-  getPixlesFromBMP24(bufferSize, fileBuffer, image);
+  getPixlesFromBMP24(bufferSize, rows, cols, fileBuffer, image);
   // Pixcels = vector<vector<Pixcel>>(rows, vector<Pixcel>(cols));
-  writeOutBmp24(fileBuffer, "output.bmp", bufferSize, image, image->rows, image->cols);
+  writeOutBmp24(fileBuffer, "output.bmp", bufferSize, image);
 
 // ///////////////////////////
 //   struct timeval start2,end2;
