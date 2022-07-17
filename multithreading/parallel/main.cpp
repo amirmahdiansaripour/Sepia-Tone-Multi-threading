@@ -4,11 +4,7 @@ ImageThread imageThreads[4];
 
 void* thread_handler(void* threadId){
   long index = (long)threadId;
-  int firstRow = imageThreads[index].firstRow;
-  int lastRow = imageThreads[index].lastRow;
-  int firstColumn = imageThreads[index].firstColumn;
-  int lastColumn = imageThreads[index].lastColumn;
-  // blur(firstRow, lastRow, firstColumn, lastColumn, *imageThreads[index].imagePointingTo);
+  blur(imageThreads[index]);
   sepia(imageThreads[index]);
   pthread_exit(NULL);
 }
@@ -86,8 +82,7 @@ int main(int argc, char *argv[]){
   setThreadDimensions(image);
   handleThreads(image);
   writeOutBmp24(fileBuffer, "output.bmp", bufferSize, *image);
-
-//   washed_out(rows, cols, Pixcels);
+  free(image);
   
 //   gettimeofday(&enit, NULL);
 //   r = (enit.tv_sec  + enit.tv_usec * 0.000001) -
