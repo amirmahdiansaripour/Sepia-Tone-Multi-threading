@@ -19,13 +19,13 @@ vector<PIGMENT> change_pixcels_blur(int row_range , int col_range){
     return {(PIGMENT) sum_red, (PIGMENT) sum_green, (PIGMENT) sum_blue};
 }
 
-void blur(int first_r, int last_r, int first_c, int last_c, vector<vector<Pixcel>>& Pixcels){
+void blur(int first_r, int last_r, int first_c, int last_c, Image& image){
 
-  raw = vector<vector<Pixcel>>(Pixcels.size(), vector<Pixcel>(Pixcels[0].size()));
+  raw = vector<vector<Pixcel>>(image.pixcels.size(), vector<Pixcel>(image.pixcels[0].size()));
   
-  for(int i = 0; i < Pixcels.size(); i++){
-    for(int j = 0; j < Pixcels[0].size(); j++){
-        raw[i][j] = Pixcels[i][j];
+  for(int i = 0; i < image.pixcels.size(); i++){
+    for(int j = 0; j < image.pixcels[0].size(); j++){
+        raw[i][j] = image.pixcels[i][j];
     }
   }
   
@@ -38,8 +38,8 @@ void blur(int first_r, int last_r, int first_c, int last_c, vector<vector<Pixcel
   for(int i = firstRow ; i <= lastRow ; i++)
     for(int j = firstColumn ; j <= lastColumn; j++){
         vector<PIGMENT> results = change_pixcels_blur(i, j);
-        Pixcels[i][j].red = results[0];
-        Pixcels[i][j].green = results[1];
-        Pixcels[i][j].blue = results[2];
+        image.pixcels[i][j].red = results[0];
+        image.pixcels[i][j].green = results[1];
+        image.pixcels[i][j].blue = results[2];
     }
 }
