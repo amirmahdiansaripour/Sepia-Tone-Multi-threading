@@ -16,6 +16,7 @@ using namespace std;
 
 typedef unsigned short WORD;
 typedef unsigned int DWORD;
+typedef unsigned char PIGMENT;
 
 typedef struct tagBITMAPFILEHEADER{
   WORD bfType;
@@ -39,8 +40,6 @@ typedef struct tagBITMAPINFOHEADER{
   DWORD biClrImportant;
 } BITMAPINFOHEADER, *PBITMAPINFOHEADER;
 
-typedef unsigned char PIGMENT;
-
 typedef struct Pixcel{
   PIGMENT green, blue, red;
   Pixcel(PIGMENT g, PIGMENT r, PIGMENT b){
@@ -61,6 +60,7 @@ typedef struct ImageThread{
   int lastRow;
   int lastColumn;
   int index;
+  pthread_t thread;
   vector<vector<Pixcel>>* imagePointingTo;
 } ImageThread;
 
@@ -68,12 +68,12 @@ typedef struct Image{
   vector<vector<Pixcel>> pixcels;
 } Image;
 
-void getPixlesFromBMP24(int end, char *fileReadBuffer, Image *image);
-void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image *image);
-vector<int> fillAndAllocate(char *&buffer, const char *fileName, int &bufferSize);
+void getPixlesFromBMP24(int, char*, Image*);
+void writeOutBmp24(char*, const char*, int, Image*);
+vector<int> fillAndAllocate(char*&, const char*, int&);
 PIGMENT calc_mean(int, int, const string&);
-void blur(int first_r, int last_r, int first_c, int last_c, vector<vector<Pixcel>>& p);
-void sepia(int firstRow, int lastRow, int firstColumn , int lastColumn , vector<vector<Pixcel>>& Pixcels);
+void blur(int, int, int, int, vector<vector<Pixcel>>&);
+void sepia(int, int, int, int, vector<vector<Pixcel>>&);
 void washed_out(int, int, vector<vector<Pixcel>>&);
 void cross(int, int, vector<vector<Pixcel>>&);
 
