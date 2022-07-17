@@ -35,6 +35,8 @@ typedef struct Image_thread{
   int first_col;
   int last_row;
   int last_col;
+  int index;
+  vector<vector<Pixcel>>* imagePointingTo;
 } Image_thread;
 
 #pragma pack(1)
