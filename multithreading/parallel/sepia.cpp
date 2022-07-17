@@ -1,25 +1,25 @@
 #include "def.h"
 
-void set_color(unsigned char& a, vector<double>& values){
-    a = (unsigned char)values[2];
+void set_color(PIGMENT& a, vector<double>& values){
+    a = (PIGMENT)values[2];
 
-    if((int)(a + (unsigned char)values[1]) < 255)
-        a += (unsigned char)values[1];
+    if((int)(a + (PIGMENT)values[1]) < 255)
+        a += (PIGMENT)values[1];
     else{
         a = 255;
         return;
     }
 
-    if((int)(a + (unsigned char)values[0]) < 255)
-        a += (unsigned char)values[0];
+    if((int)(a + (PIGMENT)values[0]) < 255)
+        a += (PIGMENT)values[0];
     else
         a = 255;
 }
 
-void sepia(int first_row, int last_row, int first_col , int last_col , vector<vector<Pixcel>>& Pixcels){
+void sepia(int firstRow, int lastRow, int firstColumn , int lastColumn , vector<vector<Pixcel>>& Pixcels){
     vector<double> values1, values2, values3;
-    for(int i = first_row; i <= last_row; i++){
-        for(int j = first_col; j <= last_col; j++){
+    for(int i = firstRow; i <= lastRow; i++){
+        for(int j = firstColumn; j <= lastColumn; j++){
             values1 = {(Pixcels[i][j].red * 0.393), (Pixcels[i][j].green * 0.769), (Pixcels[i][j].blue * 0.189)};  
             sort(values1.begin(), values1.end());
             values2 = {(Pixcels[i][j].red * 0.349), (Pixcels[i][j].green * 0.686), (Pixcels[i][j].blue * 0.168)};

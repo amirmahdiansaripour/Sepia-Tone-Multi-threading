@@ -1,18 +1,18 @@
 #include "def.h"
 
-void set_color(unsigned char& a, vector<double>& values){
-    a = (unsigned char)values[2];
+void set_color(PIGMENT& a, vector<double>& values){
+    a = (PIGMENT)values[2];
 
-    if((int)(a + (unsigned char)values[1]) < 255)
-        a += (unsigned char)values[1];
+    if((int)(a + (PIGMENT)values[1]) < 255)
+        a += (PIGMENT)values[1];
     else{
         a = 255;
         return;
     }
         
     
-    if((int)(a + (unsigned char)values[0]) < 255)
-        a += (unsigned char)values[0];
+    if((int)(a + (PIGMENT)values[0]) < 255)
+        a += (PIGMENT)values[0];
     else
         a = 255;
        

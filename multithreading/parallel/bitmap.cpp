@@ -2,8 +2,8 @@
 
 void getPixlesFromBMP24(int end, char *fileReadBuffer, Image *image)
 {
-  int rows = image->rows;
-  int cols = image->cols;
+  int rows = image->pixcels.size();
+  int cols = image->pixcels[0].size();
   int count = 1;
   int extra = cols % 4;
   for (int i = 0; i < rows; i++)
@@ -29,8 +29,10 @@ void getPixlesFromBMP24(int end, char *fileReadBuffer, Image *image)
   }
 }
 
-void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image *image, int &rows, int &cols)
+void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image *image)
 {
+  int rows = image->pixcels.size();
+  int cols = image->pixcels[0].size();
   std::ofstream write(nameOfFileToCreate);
   if (!write)
   {

@@ -1,9 +1,9 @@
 #include "def.h"
 
-void setcolor(unsigned char& a, double mean){
-    a = (unsigned char)(0.4 * a);
+void setcolor(PIGMENT& a, double mean){
+    a = (PIGMENT)(0.4 * a);
     if((int)((double)a + (0.6 * mean)) <= 255)
-        a += (unsigned char)(0.6 * mean);
+        a += (PIGMENT)(0.6 * mean);
 }
 
 void washed_out(int rows, int cols, vector<vector<Pixcel>>& Pixcels){

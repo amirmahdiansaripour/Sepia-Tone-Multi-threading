@@ -1,7 +1,7 @@
 #include "def.h"
 vector<vector<Pixcel>> raw;
 
-vector<unsigned char> change_pixcels_blur(int row_range , int col_range){
+vector<PIGMENT> change_pixcels_blur(int row_range , int col_range){
   int start_x = row_range - 1;
   int start_y = col_range - 1;
   int end_x = row_range + 1;
@@ -16,7 +16,7 @@ vector<unsigned char> change_pixcels_blur(int row_range , int col_range){
       sum_blue += (double)(((int)raw[i][j].blue) / 9);
     }
   
-    return {(unsigned char) sum_red, (unsigned char) sum_green, (unsigned char) sum_blue};
+    return {(PIGMENT) sum_red, (PIGMENT) sum_green, (PIGMENT) sum_blue};
 }
 
 void blur(int first_r, int last_r, int first_c, int last_c, vector<vector<Pixcel>>& Pixcels){
@@ -29,15 +29,15 @@ void blur(int first_r, int last_r, int first_c, int last_c, vector<vector<Pixcel
     }
   }
   
-  int first_row = (first_r == 0) ? 1 : first_r;  
-  int last_row = (last_r == raw.size() - 1) ? raw.size() - 2 : last_r;
+  int firstRow = (first_r == 0) ? 1 : first_r;  
+  int lastRow = (last_r == raw.size() - 1) ? raw.size() - 2 : last_r;
 
-  int first_col = (first_c == 0) ? 1 : first_c; 
-  int last_col =  (last_c == raw.size() - 1) ? raw.size() - 2 : last_c;
+  int firstColumn = (first_c == 0) ? 1 : first_c; 
+  int lastColumn =  (last_c == raw.size() - 1) ? raw.size() - 2 : last_c;
 
-  for(int i = first_row ; i <= last_row ; i++)
-    for(int j = first_col ; j <= last_col; j++){
-        vector<unsigned char> results = change_pixcels_blur(i, j);
+  for(int i = firstRow ; i <= lastRow ; i++)
+    for(int j = firstColumn ; j <= lastColumn; j++){
+        vector<PIGMENT> results = change_pixcels_blur(i, j);
         Pixcels[i][j].red = results[0];
         Pixcels[i][j].green = results[1];
         Pixcels[i][j].blue = results[2];

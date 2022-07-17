@@ -17,9 +17,9 @@ void change_pixcels_blur(int row_range , int col_range, vector<vector<Pixcel>>& 
       sum_blue += (double)(((int)raw[i][j].blue) / 9);
     }
   
-  Pixcels[row_range][col_range].red = (unsigned char)sum_red;
-  Pixcels[row_range][col_range].green = (unsigned char)sum_green;
-  Pixcels[row_range][col_range].blue = (unsigned char)sum_blue;
+  Pixcels[row_range][col_range].red = (PIGMENT)sum_red;
+  Pixcels[row_range][col_range].green = (PIGMENT)sum_green;
+  Pixcels[row_range][col_range].blue = (PIGMENT)sum_blue;
 }
 
 void sub_blur(int rows, int cols, vector<vector<Pixcel>>& Pixcels){

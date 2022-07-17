@@ -17,8 +17,8 @@ using namespace std;
 using namespace std::chrono;
 
 struct Pixcel{
-  unsigned char green, blue, red;
-  Pixcel(unsigned char g_, unsigned char r_, unsigned char b_){
+  PIGMENT green, blue, red;
+  Pixcel(PIGMENT g_, PIGMENT r_, PIGMENT b_){
     green = g_;
     red = r_;
     blue = b_;
@@ -32,7 +32,7 @@ struct Pixcel{
 
 typedef struct Pixcel Pixcel; 
 
-unsigned char calc_mean(int, int, const string&);
+PIGMENT calc_mean(int, int, const string&);
 void blur(int, int, vector<vector<Pixcel>>&);
 void sepia(int, int, vector<vector<Pixcel>>&);
 void washed_out(int, int, vector<vector<Pixcel>>&);

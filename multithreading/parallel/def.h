@@ -9,35 +9,7 @@
 #include <sys/time.h>
 #include <bits/stdc++.h>
 #include <pthread.h>
-using std::cout;
-using std::endl;
-using std::ifstream;
-using std::ofstream;
 using namespace std;
-using namespace std::chrono;
-
-typedef struct Pixcel{
-  unsigned char green, blue, red;
-  Pixcel(unsigned char g_, unsigned char r_, unsigned char b_){
-    green = g_;
-    red = r_;
-    blue = b_;
-  }
-  Pixcel(){
-    green = 0;
-    red = 0;
-    blue = 0;
-  }
-} Pixcel;
-
-typedef struct Image_thread{
-  int first_row;
-  int first_col;
-  int last_row;
-  int last_col;
-  int index;
-  vector<vector<Pixcel>>* imagePointingTo;
-} Image_thread;
 
 #pragma pack(1)
 #pragma once
@@ -45,8 +17,7 @@ typedef struct Image_thread{
 typedef unsigned short WORD;
 typedef unsigned int DWORD;
 
-typedef struct tagBITMAPFILEHEADER
-{
+typedef struct tagBITMAPFILEHEADER{
   WORD bfType;
   DWORD bfSize;
   WORD bfReserved1;
@@ -54,8 +25,7 @@ typedef struct tagBITMAPFILEHEADER
   DWORD bfOffBits;
 } BITMAPFILEHEADER, *PBITMAPFILEHEADER;
 
-typedef struct tagBITMAPINFOHEADER
-{
+typedef struct tagBITMAPINFOHEADER{
   DWORD biSize;
   int biWidth;
   int biHeight;
@@ -69,18 +39,41 @@ typedef struct tagBITMAPINFOHEADER
   DWORD biClrImportant;
 } BITMAPINFOHEADER, *PBITMAPINFOHEADER;
 
+typedef unsigned char PIGMENT;
+
+typedef struct Pixcel{
+  PIGMENT green, blue, red;
+  Pixcel(PIGMENT g, PIGMENT r, PIGMENT b){
+    green = g;
+    red = r;
+    blue = b;
+  }
+  Pixcel(){
+    green = 0;
+    red = 0;
+    blue = 0;
+  }
+} Pixcel;
+
+typedef struct ImageThread{
+  int firstRow;
+  int firstColumn;
+  int lastRow;
+  int lastColumn;
+  int index;
+  vector<vector<Pixcel>>* imagePointingTo;
+} ImageThread;
+
 typedef struct Image{
   vector<vector<Pixcel>> pixcels;
-  int rows;
-  int cols;
 } Image;
 
 void getPixlesFromBMP24(int end, char *fileReadBuffer, Image *image);
-void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image *image, int &rows, int &cols);
+void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image *image);
 vector<int> fillAndAllocate(char *&buffer, const char *fileName, int &bufferSize);
-unsigned char calc_mean(int, int, const string&);
+PIGMENT calc_mean(int, int, const string&);
 void blur(int first_r, int last_r, int first_c, int last_c, vector<vector<Pixcel>>& p);
-void sepia(int first_row, int last_row, int first_col , int last_col , vector<vector<Pixcel>>& Pixcels);
+void sepia(int firstRow, int lastRow, int firstColumn , int lastColumn , vector<vector<Pixcel>>& Pixcels);
 void washed_out(int, int, vector<vector<Pixcel>>&);
 void cross(int, int, vector<vector<Pixcel>>&);
 
