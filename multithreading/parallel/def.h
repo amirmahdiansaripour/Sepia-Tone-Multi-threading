@@ -79,7 +79,7 @@ void getPixlesFromBMP24(int end, char *fileReadBuffer, Image *image);
 void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image *image, int &rows, int &cols);
 vector<int> fillAndAllocate(char *&buffer, const char *fileName, int &bufferSize);
 unsigned char calc_mean(int, int, const string&);
-void blur(int first_r, int last_r, int first_c, int last_c);
+void blur(int first_r, int last_r, int first_c, int last_c, vector<vector<Pixcel>>& p);
 void sepia(int first_row, int last_row, int first_col , int last_col , vector<vector<Pixcel>>& Pixcels);
 void washed_out(int, int, vector<vector<Pixcel>>&);
 void cross(int, int, vector<vector<Pixcel>>&);

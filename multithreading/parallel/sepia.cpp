@@ -17,7 +17,6 @@ void set_color(unsigned char& a, vector<double>& values){
 }
 
 void sepia(int first_row, int last_row, int first_col , int last_col , vector<vector<Pixcel>>& Pixcels){
-    
     vector<double> values1, values2, values3;
     for(int i = first_row; i <= last_row; i++){
         for(int j = first_col; j <= last_col; j++){

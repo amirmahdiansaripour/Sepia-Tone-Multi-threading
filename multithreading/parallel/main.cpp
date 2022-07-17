@@ -1,55 +1,7 @@
 #include "def.h"
 
-vector<vector<Pixcel>> raw;
 pthread_t main_threads[4];
 Image_thread image_threads[4];
-
-
-// void change_pixcels_blur(int row_range , int col_range){
-//   int start_x = row_range - 1;
-//   int start_y = col_range - 1;
-//   int end_x = row_range + 1;
-//   int end_y = col_range + 1;
-  
-//   double sum_red = 0, sum_blue = 0, sum_green = 0;
-  
-//   for(int i = start_x; i <= end_x; i++)
-//     for(int j = start_y; j <= end_y;j++){
-//       sum_red += (double)(((int)raw[i][j].red) / 9);
-//       sum_green += (double)(((int)raw[i][j].green) / 9);
-//       sum_blue += (double)(((int)raw[i][j].blue) / 9);
-//     }
-  
-//   Pixcels[row_range][col_range].red = (unsigned char)sum_red;
-//   Pixcels[row_range][col_range].green = (unsigned char)sum_green;
-//   Pixcels[row_range][col_range].blue = (unsigned char)sum_blue;
-// }
-
-// void sub_blur(int first_row, int last_row, int first_col , int last_col){
-//   for(int i = first_row ; i <= last_row ; i++)
-//     for(int j = first_col ; j <= last_col; j++)
-//       change_pixcels_blur(i, j);
-// }
-
-// void blur(int first_r, int last_r, int first_c, int last_c){
-
-//   raw = vector<vector<Pixcel>>(10, vector<Pixcel>(10));
-  
-//   for(int i = 0; i < 10; i++){
-//     for(int j = 0; j < 10; j++){
-//         raw[i][j] = Pixcels[i][j];
-//     }
-//   }
-  
-//   int first_row = (first_r == 0) ? 1 : first_r;  
-//   int last_row = (last_r == raw.size() - 1) ? raw.size() - 2 : last_r;
-
-//   int first_col = (first_c == 0) ? 1 : first_c; 
-//   int last_col =  (last_c == raw.size() - 1) ? raw.size() - 2 : last_c;
-
-//   sub_blur(first_row, last_row, first_col , last_col);
-// }
-
 
 void* thread_handler(void* threadId){
   long index = (long)threadId;
@@ -57,7 +9,7 @@ void* thread_handler(void* threadId){
   int l_row = image_threads[index].last_row;
   int f_col = image_threads[index].first_col;
   int l_col = image_threads[index].last_col;
-  // blur(f_row, l_row, f_col, l_col);
+  blur(f_row, l_row, f_col, l_col, *image_threads[index].imagePointingTo);
   sepia(f_row, l_row, f_col, l_col, *image_threads[index].imagePointingTo);
   pthread_exit(NULL);
 }
