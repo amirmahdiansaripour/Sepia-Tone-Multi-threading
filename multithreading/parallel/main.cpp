@@ -1,6 +1,6 @@
 #include "def.h"
 
-ImageThread imageThreads[NUMBER_OF_THREADS];
+vector<ImageThread> imageThreads = vector<ImageThread>(NUMBER_OF_THREADS);
 
 void* thread_handler(void* threadId){
   long index = (long)threadId;
@@ -9,36 +9,33 @@ void* thread_handler(void* threadId){
   pthread_exit(NULL);
 }
 
+void printDimensions(string str, int f_r, int l_r, int f_c, int l_c){
+  cout << str << "\n";
+  cout << "first row : " << f_r << "\n";
+  cout << "last row : " << l_r << "\n";
+  cout << "first column : " << f_c << "\n";
+  cout << "last column : " << l_c << "\n";
+}
+
+
 void setThreadDimensions(Image* image){
   int rows = image->pixcels.size();
   int cols = image->pixcels[0].size();
-  imageThreads[0].firstRow = 0; // first quarter
-  imageThreads[0].lastRow = (rows - 1) / 2;
-  imageThreads[0].firstColumn = 0;
-  imageThreads[0].lastColumn = (cols - 1) / 2;
-  imageThreads[0].index = 0;
   
-  imageThreads[1].firstRow = 0; // second
-  imageThreads[1].lastRow = (rows - 1) / 2;
-  imageThreads[1].firstColumn = (cols + 1) / 2;
-  imageThreads[1].lastColumn = cols - 1;
-  imageThreads[1].index = 1;
-  
-  imageThreads[2].firstRow = (rows + 1) / 2;  // third
-  imageThreads[2].lastRow = rows - 1;
-  imageThreads[2].firstColumn = (cols + 1) / 2;
-  imageThreads[2].lastColumn = cols - 1;
-  imageThreads[2].index = 2;
-  
-  imageThreads[3].firstRow = (rows + 1) / 2;  // forth
-  imageThreads[3].lastRow = rows - 1;
-  imageThreads[3].firstColumn = 0;
-  imageThreads[3].lastColumn = (cols - 1) / 2;
-  imageThreads[3].index = 3;
-  
-  for(int i = 0; i < NUMBER_OF_THREADS; i++){
-    imageThreads[i].imagePointingTo = new Image;
-    imageThreads[i].imagePointingTo = image;
+  if(rows % NUMBER_OF_THREADS != 0){
+    cout << "Can not divide image to equally squared segments\n";
+    exit(0);
+  }
+  int offset = rows / NUMBER_OF_THREADS;
+  int counter = 0;
+  for(int i = 0; i <= rows - 1; i += offset){
+    imageThreads[counter].firstRow = i;
+    imageThreads[counter].lastRow = i + offset;
+    imageThreads[counter].firstColumn = 0;
+    imageThreads[counter].lastColumn = 399;
+    imageThreads[counter].imagePointingTo = new Image;
+    imageThreads[counter].imagePointingTo = image;
+    counter++;
   }
 
   return;

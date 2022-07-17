@@ -9,6 +9,7 @@
 #include <sys/time.h>
 #include <bits/stdc++.h>
 #include <pthread.h>
+#include <math.h>
 using namespace std;
 using namespace std::chrono;
 #define NUMBER_OF_THREADS 4
@@ -64,7 +65,6 @@ typedef struct ImageThread{
   int firstColumn;
   int lastRow;
   int lastColumn;
-  int index;
   pthread_t thread;
   Image* imagePointingTo;
 } ImageThread;
