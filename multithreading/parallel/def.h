@@ -12,7 +12,6 @@
 #include <math.h>
 using namespace std;
 using namespace std::chrono;
-#define NUMBER_OF_THREADS 4
 
 #pragma pack(1)
 #pragma once

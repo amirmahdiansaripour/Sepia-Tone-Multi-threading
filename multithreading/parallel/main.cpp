@@ -1,20 +1,13 @@
 #include "def.h"
 
-vector<ImageThread> imageThreads = vector<ImageThread>(NUMBER_OF_THREADS);
+long NUMBER_OF_THREADS;
+vector<ImageThread> imageThreads;
 
 void* thread_handler(void* threadId){
   long index = (long)threadId;
   blur(imageThreads[index]);
   sepia(imageThreads[index]);
   pthread_exit(NULL);
-}
-
-void printDimensions(string str, int f_r, int l_r, int f_c, int l_c){
-  cout << str << "\n";
-  cout << "first row : " << f_r << "\n";
-  cout << "last row : " << l_r << "\n";
-  cout << "first column : " << f_c << "\n";
-  cout << "last column : " << l_c << "\n";
 }
 
 
@@ -60,26 +53,44 @@ void handleThreads(Image* image){
   }
 }
 
+vector<long> getDivedends(int divisor){
+  vector<long>dividends;
+  for(int i = 2; i <= divisor; i++){
+    if(divisor % i == 0)
+      dividends.emplace_back(i);
+  }
+  return dividends;
+}
+
+void runParallel(Image* image, char *fileBuffer, int bufferSize, long dividend){
+  auto start = high_resolution_clock::now();
+  setThreadDimensions(image);
+  handleThreads(image);
+  writeOutBmp24(fileBuffer, "output2.bmp", bufferSize, *image);
+  auto end = high_resolution_clock::now();
+  auto duration = duration_cast<milliseconds>(end - start);
+  cout << "Time spent for: "  << NUMBER_OF_THREADS << "threads is "<< duration.count() << "\n";
+}
+
+
 int main(int argc, char *argv[]){
   char *fileBuffer;
   int bufferSize;
   char *fileName = argv[1];
-  Image* image = new Image;
-  
   vector<int> dimensions = fillAndAllocate(fileBuffer, fileName, bufferSize); 
   if (dimensions.size() == 0){
     cout << "File read error" << endl;
     return 1;
   }
-  image->pixcels = vector<vector<Pixcel>>(dimensions[0], vector<Pixcel>(dimensions[1]));
-  getPixlesFromBMP24(bufferSize, fileBuffer, *image);
-  auto start = high_resolution_clock::now();
-  setThreadDimensions(image);
-  handleThreads(image);
-  writeOutBmp24(fileBuffer, "output.bmp", bufferSize, *image);
-  auto end = high_resolution_clock::now();
-  auto duration = duration_cast<milliseconds>(end - start);
-  cout << "Time spent parallel (ms): " << duration.count() << "\n";
-  free(image);  
+  vector<long> feasibleNumOfThreads = {8};
+  for(long dividend : feasibleNumOfThreads){
+    NUMBER_OF_THREADS = dividend;
+    Image* image = new Image;
+    imageThreads = vector<ImageThread>(NUMBER_OF_THREADS);
+    image->pixcels = vector<vector<Pixcel>>(dimensions[0], vector<Pixcel>(dimensions[1]));
+    getPixlesFromBMP24(bufferSize, fileBuffer, *image);
+    runParallel(image, fileBuffer, bufferSize, dividend);
+    free(image);  
+  }
   return 0;
 }
