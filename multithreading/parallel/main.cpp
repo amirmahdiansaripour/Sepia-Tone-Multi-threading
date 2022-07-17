@@ -83,7 +83,7 @@ int main(int argc, char *argv[]){
     return 1;
   }
   image->pixcels = vector<vector<Pixcel>>(dimensions[0], vector<Pixcel>(dimensions[1]));
-  getPixlesFromBMP24(bufferSize, fileBuffer, image);
+  getPixlesFromBMP24(bufferSize, fileBuffer, *image);
   setThreadDimensions(image);
   handleThreads(image);
   writeOutBmp24(fileBuffer, "output.bmp", bufferSize, image);

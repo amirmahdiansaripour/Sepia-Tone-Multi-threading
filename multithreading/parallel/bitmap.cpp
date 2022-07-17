@@ -1,9 +1,9 @@
 #include "def.h"
 
-void getPixlesFromBMP24(int end, char *fileReadBuffer, Image *image)
+void getPixlesFromBMP24(int end, char *fileReadBuffer, Image &image)
 {
-  int rows = image->pixcels.size();
-  int cols = image->pixcels[0].size();
+  int rows = image.pixcels.size();
+  int cols = image.pixcels[0].size();
   int count = 1;
   int extra = cols % 4;
   for (int i = 0; i < rows; i++)
@@ -15,13 +15,13 @@ void getPixlesFromBMP24(int end, char *fileReadBuffer, Image *image)
         switch (k)
         {
         case 0: // red 
-          image->pixcels.at(i)[j].red = fileReadBuffer[end - count++];
+          image.pixcels[i][j].red = fileReadBuffer[end - count++];
           break;
         case 1: // green
-          image->pixcels[i][j].green = fileReadBuffer[end - count++];
+          image.pixcels[i][j].green = fileReadBuffer[end - count++];
           break;
         case 2: // blue
-          image->pixcels[i][j].blue = fileReadBuffer[end - count++];
+          image.pixcels[i][j].blue = fileReadBuffer[end - count++];
           break;
         }
       }

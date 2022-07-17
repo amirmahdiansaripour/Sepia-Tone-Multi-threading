@@ -68,13 +68,10 @@ typedef struct Image{
   vector<vector<Pixcel>> pixcels;
 } Image;
 
-void getPixlesFromBMP24(int, char*, Image*);
+void getPixlesFromBMP24(int, char*, Image&);
 void writeOutBmp24(char*, const char*, int, Image*);
 vector<int> fillAndAllocate(char*&, const char*, int&);
 PIGMENT calc_mean(int, int, const string&);
 void blur(int, int, int, int, vector<vector<Pixcel>>&);
 void sepia(int, int, int, int, vector<vector<Pixcel>>&);
-void washed_out(int, int, vector<vector<Pixcel>>&);
-void cross(int, int, vector<vector<Pixcel>>&);
-
 #endif
