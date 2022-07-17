@@ -8,8 +8,8 @@ void* thread_handler(void* threadId){
   int lastRow = imageThreads[index].lastRow;
   int firstColumn = imageThreads[index].firstColumn;
   int lastColumn = imageThreads[index].lastColumn;
-  blur(firstRow, lastRow, firstColumn, lastColumn, *imageThreads[index].imagePointingTo);
-  sepia(firstRow, lastRow, firstColumn, lastColumn, *imageThreads[index].imagePointingTo);
+  // blur(firstRow, lastRow, firstColumn, lastColumn, *imageThreads[index].imagePointingTo);
+  sepia(imageThreads[index]);
   pthread_exit(NULL);
 }
 
