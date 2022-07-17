@@ -1,5 +1,5 @@
 #ifndef _DEF_H__
-#define _DEF_H_
+#define _DEF_H__
 
 #include <iostream>
 #include <unistd.h>
@@ -10,10 +10,11 @@
 #include <bits/stdc++.h>
 #include <pthread.h>
 using namespace std;
+using namespace std::chrono;
+#define NUMBER_OF_THREADS 4
 
 #pragma pack(1)
 #pragma once
-
 typedef unsigned short WORD;
 typedef unsigned int DWORD;
 typedef unsigned char PIGMENT;

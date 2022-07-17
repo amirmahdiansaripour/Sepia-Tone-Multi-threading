@@ -1,6 +1,6 @@
 #include "def.h"
 
-ImageThread imageThreads[4];
+ImageThread imageThreads[NUMBER_OF_THREADS];
 
 void* thread_handler(void* threadId){
   long index = (long)threadId;
@@ -36,7 +36,7 @@ void setThreadDimensions(Image* image){
   imageThreads[3].lastColumn = (cols - 1) / 2;
   imageThreads[3].index = 3;
   
-  for(int i = 0; i < 4; i++){
+  for(int i = 0; i < NUMBER_OF_THREADS; i++){
     imageThreads[i].imagePointingTo = new Image;
     imageThreads[i].imagePointingTo = image;
   }
@@ -46,7 +46,7 @@ void setThreadDimensions(Image* image){
 
 void handleThreads(Image* image){
   int created, joined;
-  for(long i = 0; i < 4; i++){
+  for(long i = 0; i < NUMBER_OF_THREADS; i++){
     created = pthread_create(&imageThreads[i].thread, NULL, thread_handler, (void*)i);
     if(created){
       cout << "Error on create\n";
@@ -54,7 +54,7 @@ void handleThreads(Image* image){
     }
   }
 
-  for(long i = 0; i < 4; i++){
+  for(long i = 0; i < NUMBER_OF_THREADS; i++){
     joined = pthread_join(imageThreads[i].thread, NULL);
     if(joined){
       cout << "Error on join\n";
@@ -64,9 +64,6 @@ void handleThreads(Image* image){
 }
 
 int main(int argc, char *argv[]){
-  struct timeval init,enit;
-  gettimeofday(&init, NULL);
-
   char *fileBuffer;
   int bufferSize;
   char *fileName = argv[1];
@@ -79,14 +76,13 @@ int main(int argc, char *argv[]){
   }
   image->pixcels = vector<vector<Pixcel>>(dimensions[0], vector<Pixcel>(dimensions[1]));
   getPixlesFromBMP24(bufferSize, fileBuffer, *image);
+  auto start = high_resolution_clock::now();
   setThreadDimensions(image);
   handleThreads(image);
   writeOutBmp24(fileBuffer, "output.bmp", bufferSize, *image);
-  free(image);
-  
-//   gettimeofday(&enit, NULL);
-//   r = (enit.tv_sec  + enit.tv_usec * 0.000001) -
-//     (init.tv_sec  + init.tv_usec * 0.000001);
-//   cout << "time consumed parallel: " << r << '\n';
+  auto end = high_resolution_clock::now();
+  auto duration = duration_cast<milliseconds>(end - start);
+  cout << "Time spent parallel (ms): " << duration.count() << "\n";
+  free(image);  
   return 0;
 }
