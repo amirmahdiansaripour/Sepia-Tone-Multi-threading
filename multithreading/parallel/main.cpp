@@ -4,12 +4,8 @@ ImageThread imageThreads[4];
 
 void* thread_handler(void* threadId){
   long index = (long)threadId;
-  int firstRow = imageThreads[index].firstRow;
-  int lastRow = imageThreads[index].lastRow;
-  int firstColumn = imageThreads[index].firstColumn;
-  int lastColumn = imageThreads[index].lastColumn;
-  blur(firstRow, lastRow, firstColumn, lastColumn, *imageThreads[index].imagePointingTo);
-  sepia(firstRow, lastRow, firstColumn, lastColumn, *imageThreads[index].imagePointingTo);
+  blur(imageThreads[index]);
+  sepia(imageThreads[index]);
   pthread_exit(NULL);
 }
 
@@ -41,9 +37,8 @@ void setThreadDimensions(Image* image){
   imageThreads[3].index = 3;
   
   for(int i = 0; i < 4; i++){
-    imageThreads[i].imagePointingTo = new vector<vector<Pixcel>>(image->pixcels.size(), 
-    vector<Pixcel>(image->pixcels[0].size()));
-    imageThreads[i].imagePointingTo = &(image->pixcels);
+    imageThreads[i].imagePointingTo = new Image;
+    imageThreads[i].imagePointingTo = image;
   }
 
   return;
@@ -86,9 +81,8 @@ int main(int argc, char *argv[]){
   getPixlesFromBMP24(bufferSize, fileBuffer, *image);
   setThreadDimensions(image);
   handleThreads(image);
-  writeOutBmp24(fileBuffer, "output.bmp", bufferSize, image);
-
-//   washed_out(rows, cols, Pixcels);
+  writeOutBmp24(fileBuffer, "output.bmp", bufferSize, *image);
+  free(image);
   
 //   gettimeofday(&enit, NULL);
 //   r = (enit.tv_sec  + enit.tv_usec * 0.000001) -

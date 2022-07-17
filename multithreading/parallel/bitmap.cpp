@@ -1,7 +1,6 @@
 #include "def.h"
 
-void getPixlesFromBMP24(int end, char *fileReadBuffer, Image &image)
-{
+void getPixlesFromBMP24(int end, char *fileReadBuffer, Image &image){
   int rows = image.pixcels.size();
   int cols = image.pixcels[0].size();
   int count = 1;
@@ -29,10 +28,9 @@ void getPixlesFromBMP24(int end, char *fileReadBuffer, Image &image)
   }
 }
 
-void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image *image)
-{
-  int rows = image->pixcels.size();
-  int cols = image->pixcels[0].size();
+void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image &image){
+  int rows = image.pixcels.size();
+  int cols = image.pixcels[0].size();
   std::ofstream write(nameOfFileToCreate);
   if (!write)
   {
@@ -50,15 +48,15 @@ void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferS
         switch (k)
         {
         case 0:
-          fileBuffer[bufferSize - count++] = image->pixcels[i][j].red;
+          fileBuffer[bufferSize - count++] = image.pixcels[i][j].red;
           // write red value in fileBuffer[bufferSize - count]
           break;
         case 1:
-          fileBuffer[bufferSize - count++] = image->pixcels[i][j].green ;
+          fileBuffer[bufferSize - count++] = image.pixcels[i][j].green ;
           // write green value in fileBuffer[bufferSize - count]
           break;
         case 2:
-          fileBuffer[bufferSize - count++] = image->pixcels[i][j].blue;
+          fileBuffer[bufferSize - count++] = image.pixcels[i][j].blue;
           // write blue value in fileBuffer[bufferSize - count]
           break;
         }

@@ -54,6 +54,10 @@ typedef struct Pixcel{
   }
 } Pixcel;
 
+typedef struct Image{
+  vector<vector<Pixcel>> pixcels;
+} Image;
+
 typedef struct ImageThread{
   int firstRow;
   int firstColumn;
@@ -61,17 +65,12 @@ typedef struct ImageThread{
   int lastColumn;
   int index;
   pthread_t thread;
-  vector<vector<Pixcel>>* imagePointingTo;
+  Image* imagePointingTo;
 } ImageThread;
 
-typedef struct Image{
-  vector<vector<Pixcel>> pixcels;
-} Image;
-
-void getPixlesFromBMP24(int, char*, Image&);
-void writeOutBmp24(char*, const char*, int, Image*);
 vector<int> fillAndAllocate(char*&, const char*, int&);
-PIGMENT calc_mean(int, int, const string&);
-void blur(int, int, int, int, vector<vector<Pixcel>>&);
-void sepia(int, int, int, int, vector<vector<Pixcel>>&);
+void getPixlesFromBMP24(int, char*, Image&);
+void writeOutBmp24(char*, const char*, int, Image&);
+void blur(ImageThread&);
+void sepia(ImageThread&);
 #endif
