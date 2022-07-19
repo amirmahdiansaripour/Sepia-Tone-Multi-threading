@@ -6,7 +6,8 @@ vector<ImageThread> imageThreads;
 void* thread_handler(void* threadId){
   long index = (long)threadId;
   blur(imageThreads[index]);
-  sepia(imageThreads[index]);
+  blur(imageThreads[index]);
+  blur(imageThreads[index]);
   pthread_exit(NULL);
 }
 
@@ -25,7 +26,7 @@ void setThreadDimensions(Image* image){
     imageThreads[counter].firstRow = i;
     imageThreads[counter].lastRow = i + offset;
     imageThreads[counter].firstColumn = 0;
-    imageThreads[counter].lastColumn = 399;
+    imageThreads[counter].lastColumn = image->pixcels.size();
     imageThreads[counter].imagePointingTo = new Image;
     imageThreads[counter].imagePointingTo = image;
     counter++;
@@ -37,19 +38,8 @@ void setThreadDimensions(Image* image){
 void handleThreads(Image* image){
   int created, joined;
   for(long i = 0; i < NUMBER_OF_THREADS; i++){
-    created = pthread_create(&imageThreads[i].thread, NULL, thread_handler, (void*)i);
-    if(created){
-      cout << "Error on create\n";
-      exit(-1);
-    }
-  }
-
-  for(long i = 0; i < NUMBER_OF_THREADS; i++){
-    joined = pthread_join(imageThreads[i].thread, NULL);
-    if(joined){
-      cout << "Error on join\n";
-      exit(-1);
-    }
+    pthread_create(&imageThreads[i].thread, NULL, thread_handler, (void*)i);
+    pthread_join(imageThreads[i].thread, NULL);
   }
 }
 
@@ -62,35 +52,39 @@ vector<long> getDivedends(int divisor){
   return dividends;
 }
 
-void runParallel(Image* image, char *fileBuffer, int bufferSize, long dividend){
+void runParallel(Image* image, char *fileBuffer, int bufferSize, float rate){
   auto start = high_resolution_clock::now();
   setThreadDimensions(image);
   handleThreads(image);
-  writeOutBmp24(fileBuffer, "output2.bmp", bufferSize, *image);
+  writeOutBmp24(fileBuffer, "results/output" + to_string(rate) + ".bmp", bufferSize, *image);
   auto end = high_resolution_clock::now();
   auto duration = duration_cast<milliseconds>(end - start);
-  cout << "Time spent for: "  << NUMBER_OF_THREADS << "threads is "<< duration.count() << "\n";
+  cout << "Time spent for: "  << rate << "\t thread rate is "<< duration.count() << "\n";
 }
 
-
 int main(int argc, char *argv[]){
-  char *fileBuffer;
-  int bufferSize;
-  char *fileName = argv[1];
-  vector<int> dimensions = fillAndAllocate(fileBuffer, fileName, bufferSize); 
-  if (dimensions.size() == 0){
-    cout << "File read error" << endl;
-    return 1;
-  }
-  vector<long> feasibleNumOfThreads = {8};
-  for(long dividend : feasibleNumOfThreads){
-    NUMBER_OF_THREADS = dividend;
+
+  char *fileName = argv[1];  
+  char *temporary = readBMP24(fileName); 
+  vector<int> fileDimensions = getFileSize(temporary);  
+  int rows = fileDimensions[0];
+  int cols = fileDimensions[1];
+  int bufferSize = fileDimensions[2];
+
+  vector<long> feasibleNumOfThreads = getDivedends(rows);
+
+  for(int i = 0; i < feasibleNumOfThreads.size(); i++){
+    float threadRate = (float) feasibleNumOfThreads[i] / rows;
+    char *fileBuffer = readBMP24(fileName);
+    NUMBER_OF_THREADS = feasibleNumOfThreads[i];
     Image* image = new Image;
     imageThreads = vector<ImageThread>(NUMBER_OF_THREADS);
-    image->pixcels = vector<vector<Pixcel>>(dimensions[0], vector<Pixcel>(dimensions[1]));
+    image->pixcels = vector<vector<Pixcel>>(rows, vector<Pixcel>(cols));
     getPixlesFromBMP24(bufferSize, fileBuffer, *image);
-    runParallel(image, fileBuffer, bufferSize, dividend);
-    free(image);  
+    runParallel(image, fileBuffer, bufferSize, threadRate);
+    free(image); 
+    free(fileBuffer); 
   }
+  free(temporary);
   return 0;
 }

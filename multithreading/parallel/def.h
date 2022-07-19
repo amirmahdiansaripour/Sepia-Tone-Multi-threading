@@ -68,9 +68,10 @@ typedef struct ImageThread{
   Image* imagePointingTo;
 } ImageThread;
 
-vector<int> fillAndAllocate(char*&, const char*, int&);
+char* readBMP24(const char *);
+vector<int> getFileSize(char* buffer);
 void getPixlesFromBMP24(int, char*, Image&);
-void writeOutBmp24(char*, const char*, int, Image&);
+void writeOutBmp24(char*, string, int, Image&);
 void blur(ImageThread&);
 void sepia(ImageThread&);
 #endif

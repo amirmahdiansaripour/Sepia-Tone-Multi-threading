@@ -23,7 +23,7 @@ void getPixlesFromBMP24(int end, char *fileReadBuffer, Image &image){
   }
 }
 
-void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferSize, Image &image){
+void writeOutBmp24(char *fileBuffer, string nameOfFileToCreate, int bufferSize, Image &image){
   int rows = image.pixcels.size();
   int cols = image.pixcels[0].size();
   ofstream write(nameOfFileToCreate);
@@ -57,7 +57,19 @@ void writeOutBmp24(char *fileBuffer, const char *nameOfFileToCreate, int bufferS
   write.close();
 }
 
-vector<int> fillAndAllocate(char *&buffer, const char *fileName, int &bufferSize){
+vector<int> getFileSize(char* buffer){
+  PBITMAPFILEHEADER fileHeader;
+  PBITMAPINFOHEADER infoHeader;
+
+  fileHeader = (PBITMAPFILEHEADER)(&buffer[0]);
+  infoHeader = (PBITMAPINFOHEADER)(&buffer[0] + sizeof(BITMAPFILEHEADER));
+  int rows = infoHeader->biHeight;
+  int cols = infoHeader->biWidth;
+  int bufferSize = fileHeader->bfSize; 
+  return {rows, cols, bufferSize};
+}
+
+char* readBMP24(const char *fileName){
   ifstream file(fileName);
 
   if (file){
@@ -65,24 +77,16 @@ vector<int> fillAndAllocate(char *&buffer, const char *fileName, int &bufferSize
     streampos length = file.tellg();
     file.seekg(0, ios::beg);
 
-    buffer = new char[length];
+    char* buffer = new char[length];
     file.read(&buffer[0], length);
 
-    PBITMAPFILEHEADER fileHeader;
-    PBITMAPINFOHEADER infoHeader;
-
-    fileHeader = (PBITMAPFILEHEADER)(&buffer[0]);
-    infoHeader = (PBITMAPINFOHEADER)(&buffer[0] + sizeof(BITMAPFILEHEADER));
-    int rows = infoHeader->biHeight;
-    int cols = infoHeader->biWidth;
-    bufferSize = fileHeader->bfSize;
     file.close();
-    return {rows, cols};
+    return buffer;
   }
   else{
     cout << "File" << fileName << " doesn't exist!" << endl;
     file.close();
-    return {};
+    exit(0);
   }
 }
 
