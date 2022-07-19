@@ -21,7 +21,7 @@ void setColor(PIGMENT& color, vector<double>& values){
 
 void sepia(ImageThread& imageThread){
     vector<double> values1, values2, values3;
-    for(int i = imageThread.firstRow; i <= imageThread.lastRow; i++){
+    for(int i = imageThread.firstRow; i < imageThread.lastRow; i++){
         for(int j = imageThread.firstColumn; j <= imageThread.lastColumn; j++){
             PIGMENT red = imageThread.imagePointingTo->pixcels[i][j].red;
             PIGMENT green = imageThread.imagePointingTo->pixcels[i][j].green;

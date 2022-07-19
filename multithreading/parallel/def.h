@@ -1,5 +1,5 @@
 #ifndef _DEF_H__
-#define _DEF_H_
+#define _DEF_H__
 
 #include <iostream>
 #include <unistd.h>
@@ -9,11 +9,12 @@
 #include <sys/time.h>
 #include <bits/stdc++.h>
 #include <pthread.h>
+#include <math.h>
 using namespace std;
+using namespace std::chrono;
 
 #pragma pack(1)
 #pragma once
-
 typedef unsigned short WORD;
 typedef unsigned int DWORD;
 typedef unsigned char PIGMENT;
@@ -63,14 +64,14 @@ typedef struct ImageThread{
   int firstColumn;
   int lastRow;
   int lastColumn;
-  int index;
   pthread_t thread;
   Image* imagePointingTo;
 } ImageThread;
 
-vector<int> fillAndAllocate(char*&, const char*, int&);
+char* readBMP24(const char *);
+vector<int> getFileSize(char* buffer);
 void getPixlesFromBMP24(int, char*, Image&);
-void writeOutBmp24(char*, const char*, int, Image&);
+void writeOutBmp24(char*, string, int, Image&);
 void blur(ImageThread&);
 void sepia(ImageThread&);
 #endif
