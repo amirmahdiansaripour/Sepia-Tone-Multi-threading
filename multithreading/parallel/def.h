@@ -10,6 +10,7 @@
 #include <bits/stdc++.h>
 #include <pthread.h>
 #include <math.h>
+#define CSV_FILE "samples.csv"
 using namespace std;
 using namespace std::chrono;
 
