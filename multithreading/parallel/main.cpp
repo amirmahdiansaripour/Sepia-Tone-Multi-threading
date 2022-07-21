@@ -5,8 +5,9 @@ vector<ImageThread> imageThreads;
 
 void* thread_handler(void* threadId){
   long index = (long)threadId;
-  // blur(imageThreads[index]);
-  sepia(imageThreads[index]);
+  blur(imageThreads[index]);
+  blur(imageThreads[index]);
+  blur(imageThreads[index]);
   pthread_exit(NULL);
 }
 
@@ -14,7 +15,7 @@ void* thread_handler(void* threadId){
 void setThreadDimensions(Image* image){
   int rows = image->pixcels.size();
   int cols = image->pixcels[0].size();
-  
+  // cout << "rows\t" << rows << "\tcols\t" << cols << "\n"; 
   if(rows % NUMBER_OF_THREADS != 0){
     cout << "Can not divide image to equally squared segments\n";
     exit(0);
@@ -25,9 +26,10 @@ void setThreadDimensions(Image* image){
     imageThreads[counter].firstRow = i;
     imageThreads[counter].lastRow = i + offset;
     imageThreads[counter].firstColumn = 0;
-    imageThreads[counter].lastColumn = image->pixcels[0].size();
+    imageThreads[counter].lastColumn = cols - 1;
     imageThreads[counter].imagePointingTo = new Image;
     imageThreads[counter].imagePointingTo = image;
+    imageThreads[counter].unprocessedImage = image->pixcels;
     counter++;
   }
 
@@ -44,11 +46,11 @@ void handleThreads(Image* image){
   }
 }
 
-vector<long> getDivedends(int divisor){
+vector<long> getDivedends(int imageSize){
   vector<long>dividends;
-  for(int i = 2; i <= divisor; i++){
-    if(divisor % i == 0)
-      dividends.emplace_back(i);
+  for(int numOfthreads = 2; numOfthreads <= imageSize; numOfthreads++){
+    if(imageSize % numOfthreads == 0)
+      dividends.emplace_back(numOfthreads);
   }
   return dividends;
 }
@@ -75,14 +77,14 @@ int main(int argc, char *argv[]){
   vector<long> feasibleNumOfThreads = getDivedends(rows);
 
   for(int i = 0; i < feasibleNumOfThreads.size(); i++){
-    float threadRate = (float) feasibleNumOfThreads[i] / rows;
+    // cout << "numOfThreads " << feasibleNumOfThreads[i] << "\n";
+    float threadRate = (float) feasibleNumOfThreads[i];
     char *fileBuffer = readBMP24(fileName);
     NUMBER_OF_THREADS = feasibleNumOfThreads[i];
     Image* image = new Image;
     imageThreads = vector<ImageThread>(NUMBER_OF_THREADS);
     image->pixcels = vector<vector<Pixcel>>(rows, vector<Pixcel>(cols));
     getPixlesFromBMP24(bufferSize, fileBuffer, *image);
-    setDefaultImage(image->pixcels);
     runParallel(image, fileBuffer, bufferSize, threadRate);
     free(image); 
     free(fileBuffer); 

@@ -66,6 +66,7 @@ typedef struct ImageThread{
   int lastColumn;
   pthread_t thread;
   Image* imagePointingTo;
+  vector<vector<Pixcel>> unprocessedImage;
 } ImageThread;
 
 char* readBMP24(const char *);

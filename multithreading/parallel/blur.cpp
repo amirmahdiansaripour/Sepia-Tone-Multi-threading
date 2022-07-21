@@ -1,12 +1,6 @@
 #include "def.h"
 
-vector<vector<Pixcel>> raw;
-
-void setDefaultImage(vector<vector<Pixcel>>& img){
-    raw = img;
-}
-
-vector<PIGMENT> performBlurOnPixcels(int row_range , int col_range){
+vector<PIGMENT> performBlurOnPixcels(int row_range , int col_range, vector<vector<Pixcel>>& raw){
 
     double sumRed = 0, sumBlue = 0, sumGreen = 0;
   
@@ -27,17 +21,18 @@ void blur(ImageThread &imageThread){
     int numberOfColumns = imageThread.imagePointingTo->pixcels[0].size(); 
 
     int firstRow = (imageThread.firstRow == 0) ? 1 : imageThread.firstRow;  
-    int lastRow = (imageThread.lastRow >= raw.size() - 1) ? raw.size() - 2 : imageThread.lastRow;
+    int lastRow = (imageThread.lastRow >= imageThread.unprocessedImage.size() - 1) ? imageThread.unprocessedImage.size() - 2 : imageThread.lastRow;
 
     int firstColumn = (imageThread.firstColumn == 0) ? 1 : imageThread.firstColumn; 
-    int lastColumn =  (imageThread.lastColumn >= raw[0].size() - 1) ? raw[0].size() - 2 : imageThread.lastColumn;
+    int lastColumn =  (imageThread.lastColumn >= imageThread.unprocessedImage[0].size() - 1) ? imageThread.unprocessedImage[0].size() - 2 : imageThread.lastColumn;
   
     for(int i = firstRow ; i <= lastRow ; i++){
         for(int j = firstColumn ; j <= lastColumn; j++){
-            vector<PIGMENT> results = performBlurOnPixcels(i, j);
+            vector<PIGMENT> results = performBlurOnPixcels(i, j, imageThread.unprocessedImage);
             imageThread.imagePointingTo->pixcels[i][j].red = results[0];
             imageThread.imagePointingTo->pixcels[i][j].green = results[1];
             imageThread.imagePointingTo->pixcels[i][j].blue = results[2];
         }
     }
+
 }
