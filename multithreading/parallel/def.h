@@ -72,6 +72,7 @@ char* readBMP24(const char *);
 vector<int> getFileSize(char* buffer);
 void getPixlesFromBMP24(int, char*, Image&);
 void writeOutBmp24(char*, string, int, Image&);
-void blur(ImageThread&);
+void setDefaultImage(vector<vector<Pixcel>>&);
+void blur(ImageThread &);
 void sepia(ImageThread&);
 #endif

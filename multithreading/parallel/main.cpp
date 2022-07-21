@@ -5,9 +5,8 @@ vector<ImageThread> imageThreads;
 
 void* thread_handler(void* threadId){
   long index = (long)threadId;
-  blur(imageThreads[index]);
-  blur(imageThreads[index]);
-  blur(imageThreads[index]);
+  // blur(imageThreads[index]);
+  sepia(imageThreads[index]);
   pthread_exit(NULL);
 }
 
@@ -26,7 +25,7 @@ void setThreadDimensions(Image* image){
     imageThreads[counter].firstRow = i;
     imageThreads[counter].lastRow = i + offset;
     imageThreads[counter].firstColumn = 0;
-    imageThreads[counter].lastColumn = image->pixcels.size();
+    imageThreads[counter].lastColumn = image->pixcels[0].size();
     imageThreads[counter].imagePointingTo = new Image;
     imageThreads[counter].imagePointingTo = image;
     counter++;
@@ -39,7 +38,9 @@ void handleThreads(Image* image){
   int created, joined;
   for(long i = 0; i < NUMBER_OF_THREADS; i++){
     pthread_create(&imageThreads[i].thread, NULL, thread_handler, (void*)i);
-    pthread_join(imageThreads[i].thread, NULL);
+  }
+  for(long j = 0; j < NUMBER_OF_THREADS; j++){
+    pthread_join(imageThreads[j].thread, NULL);
   }
 }
 
@@ -81,6 +82,7 @@ int main(int argc, char *argv[]){
     imageThreads = vector<ImageThread>(NUMBER_OF_THREADS);
     image->pixcels = vector<vector<Pixcel>>(rows, vector<Pixcel>(cols));
     getPixlesFromBMP24(bufferSize, fileBuffer, *image);
+    setDefaultImage(image->pixcels);
     runParallel(image, fileBuffer, bufferSize, threadRate);
     free(image); 
     free(fileBuffer); 
