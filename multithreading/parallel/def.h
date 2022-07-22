@@ -10,6 +10,8 @@
 #include <bits/stdc++.h>
 #include <pthread.h>
 #include <math.h>
+#define CSV_FILE "samples.csv"
+#define MIN_CSV_FILE "optimized-number-of-threads.csv"
 using namespace std;
 using namespace std::chrono;
 
@@ -66,12 +68,15 @@ typedef struct ImageThread{
   int lastColumn;
   pthread_t thread;
   Image* imagePointingTo;
+  vector<vector<Pixcel>> unprocessedImage;
 } ImageThread;
 
 char* readBMP24(const char *);
 vector<int> getFileSize(char* buffer);
 void getPixlesFromBMP24(int, char*, Image&);
 void writeOutBmp24(char*, string, int, Image&);
-void blur(ImageThread&);
+void setDefaultImage(vector<vector<Pixcel>>&);
+void blur(ImageThread &);
 void sepia(ImageThread&);
+float getOptimizedNumberOfThreads(vector<vector<float>>&);
 #endif

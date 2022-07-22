@@ -1,21 +1,22 @@
 #include "def.h"
 
 long NUMBER_OF_THREADS;
+long MAX_NUMBER_OF_THREADS 200
 vector<ImageThread> imageThreads;
 
 void* thread_handler(void* threadId){
   long index = (long)threadId;
-  blur(imageThreads[index]);
-  blur(imageThreads[index]);
-  blur(imageThreads[index]);
+  sepia(imageThreads[index]);
+  sepia(imageThreads[index]);
+  sepia(imageThreads[index]);
   pthread_exit(NULL);
 }
 
 
 void setThreadDimensions(Image* image){
   int rows = image->pixcels.size();
-  int cols = image->pixcels[0].size();
-  
+  int columns = image->pixcels[0].size();
+  // cout << "rows\t" << rows << "\tcolumns\t" << columns << "\n"; 
   if(rows % NUMBER_OF_THREADS != 0){
     cout << "Can not divide image to equally squared segments\n";
     exit(0);
@@ -26,9 +27,10 @@ void setThreadDimensions(Image* image){
     imageThreads[counter].firstRow = i;
     imageThreads[counter].lastRow = i + offset;
     imageThreads[counter].firstColumn = 0;
-    imageThreads[counter].lastColumn = image->pixcels.size();
+    imageThreads[counter].lastColumn = columns - 1;
     imageThreads[counter].imagePointingTo = new Image;
     imageThreads[counter].imagePointingTo = image;
+    imageThreads[counter].unprocessedImage = image->pixcels;
     counter++;
   }
 
@@ -39,27 +41,62 @@ void handleThreads(Image* image){
   int created, joined;
   for(long i = 0; i < NUMBER_OF_THREADS; i++){
     pthread_create(&imageThreads[i].thread, NULL, thread_handler, (void*)i);
-    pthread_join(imageThreads[i].thread, NULL);
+  }
+  for(long j = 0; j < NUMBER_OF_THREADS; j++){
+    pthread_join(imageThreads[j].thread, NULL);
   }
 }
 
-vector<long> getDivedends(int divisor){
+vector<long> getDivedends(int imageSize){
   vector<long>dividends;
-  for(int i = 2; i <= divisor; i++){
-    if(divisor % i == 0)
-      dividends.emplace_back(i);
+  for(int numOfthreads = 2; numOfthreads < imageSize; numOfthreads++){
+    if(imageSize % numOfthreads == 0 && numOfthreads <= MAX_NUMBER_OF_THREADS)
+      dividends.emplace_back(numOfthreads);
   }
   return dividends;
 }
 
-void runParallel(Image* image, char *fileBuffer, int bufferSize, float rate){
+vector<float> runParallel(Image* image, char *fileBuffer, int bufferSize){
+  // float rate = (float) NUMBER_OF_THREADS;
   auto start = high_resolution_clock::now();
   setThreadDimensions(image);
   handleThreads(image);
-  writeOutBmp24(fileBuffer, "results/output" + to_string(rate) + ".bmp", bufferSize, *image);
+  writeOutBmp24(fileBuffer, "results/output" + to_string(NUMBER_OF_THREADS) + ".bmp", bufferSize, *image);
   auto end = high_resolution_clock::now();
   auto duration = duration_cast<milliseconds>(end - start);
-  cout << "Time spent for: "  << rate << "\t thread rate is "<< duration.count() << "\n";
+  // cout << "Time spent for: "  << NUMBER_OF_THREADS << "\t threads is "<< duration.count() << "\n";
+  return {(float) NUMBER_OF_THREADS, (float)duration.count()};
+}
+
+void writeAllSamplesToCSV(vector<vector<float>>& samples){
+  ofstream recordsFile;
+  recordsFile.open(CSV_FILE);
+  recordsFile << "x,y\n";
+  recordsFile << getOptimizedNumberOfThreads(samples) << "\n";
+  for(vector<float> row : samples){
+    recordsFile << row[0] << "," << row[1] << "\n";
+  }
+  recordsFile.close();
+}
+
+float getOptimizedNumberOfThreads(vector<vector<float>>& samples){
+  float optimizedNumberOfThreads = samples[0][0];
+  float minTimeSpent = samples[0][1];
+  for(int i = 0; i < samples.size(); i++){
+    if(samples[i][1] < minTimeSpent){
+      minTimeSpent = samples[i][1];
+      optimizedNumberOfThreads = samples[i][0];
+    }
+  }
+  return optimizedNumberOfThreads;
+}
+
+
+void writeMinSampleToCSV(float optimizedNumberOfThreads){
+  fstream minValueRecord;
+  minValueRecord.open(MIN_CSV_FILE, ios::out | ios::app);
+  minValueRecord << optimizedNumberOfThreads << '\n';
+  minValueRecord.close();
 }
 
 int main(int argc, char *argv[]){
@@ -68,23 +105,25 @@ int main(int argc, char *argv[]){
   char *temporary = readBMP24(fileName); 
   vector<int> fileDimensions = getFileSize(temporary);  
   int rows = fileDimensions[0];
-  int cols = fileDimensions[1];
+  int columns = fileDimensions[1];
   int bufferSize = fileDimensions[2];
 
   vector<long> feasibleNumOfThreads = getDivedends(rows);
-
+  vector<vector<float>> sampleOutput;
   for(int i = 0; i < feasibleNumOfThreads.size(); i++){
-    float threadRate = (float) feasibleNumOfThreads[i] / rows;
     char *fileBuffer = readBMP24(fileName);
     NUMBER_OF_THREADS = feasibleNumOfThreads[i];
     Image* image = new Image;
     imageThreads = vector<ImageThread>(NUMBER_OF_THREADS);
-    image->pixcels = vector<vector<Pixcel>>(rows, vector<Pixcel>(cols));
+    image->pixcels = vector<vector<Pixcel>>(rows, vector<Pixcel>(columns));
     getPixlesFromBMP24(bufferSize, fileBuffer, *image);
-    runParallel(image, fileBuffer, bufferSize, threadRate);
+    sampleOutput.emplace_back(runParallel(image, fileBuffer, bufferSize));
     free(image); 
     free(fileBuffer); 
   }
+  writeAllSamplesToCSV(sampleOutput);
+  float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
+  writeMinSampleToCSV(optimizedNumberOfThreads);
   free(temporary);
   return 0;
 }
