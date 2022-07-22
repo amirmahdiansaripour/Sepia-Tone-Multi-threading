@@ -1,6 +1,7 @@
 #!/bin/bash
 make clean
 make
-./ImageFilters.out princes.bmp
+rm results/*
+./ImageFilters.out palace-rotate.bmp
 wait
 python3 plot.py

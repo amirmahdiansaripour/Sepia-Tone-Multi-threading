@@ -78,4 +78,5 @@ void writeOutBmp24(char*, string, int, Image&);
 void setDefaultImage(vector<vector<Pixcel>>&);
 void blur(ImageThread &);
 void sepia(ImageThread&);
+float getOptimizedNumberOfThreads(vector<vector<float>>&);
 #endif

@@ -1,6 +1,7 @@
 #include "def.h"
 
 long NUMBER_OF_THREADS;
+long MAX_NUMBER_OF_THREADS 200
 vector<ImageThread> imageThreads;
 
 void* thread_handler(void* threadId){
@@ -49,14 +50,14 @@ void handleThreads(Image* image){
 vector<long> getDivedends(int imageSize){
   vector<long>dividends;
   for(int numOfthreads = 2; numOfthreads < imageSize; numOfthreads++){
-    if(imageSize % numOfthreads == 0)
+    if(imageSize % numOfthreads == 0 && numOfthreads <= MAX_NUMBER_OF_THREADS)
       dividends.emplace_back(numOfthreads);
   }
   return dividends;
 }
 
 vector<float> runParallel(Image* image, char *fileBuffer, int bufferSize){
-  float rate = (float) NUMBER_OF_THREADS / image->pixcels.size();
+  // float rate = (float) NUMBER_OF_THREADS;
   auto start = high_resolution_clock::now();
   setThreadDimensions(image);
   handleThreads(image);
@@ -64,20 +65,21 @@ vector<float> runParallel(Image* image, char *fileBuffer, int bufferSize){
   auto end = high_resolution_clock::now();
   auto duration = duration_cast<milliseconds>(end - start);
   // cout << "Time spent for: "  << NUMBER_OF_THREADS << "\t threads is "<< duration.count() << "\n";
-  return {rate, (float)duration.count()};
+  return {(float) NUMBER_OF_THREADS, (float)duration.count()};
 }
 
 void writeAllSamplesToCSV(vector<vector<float>>& samples){
   ofstream recordsFile;
   recordsFile.open(CSV_FILE);
   recordsFile << "x,y\n";
+  recordsFile << getOptimizedNumberOfThreads(samples) << "\n";
   for(vector<float> row : samples){
     recordsFile << row[0] << "," << row[1] << "\n";
   }
   recordsFile.close();
 }
 
-void writeMinSampleToCSV(vector<vector<float>>& samples){
+float getOptimizedNumberOfThreads(vector<vector<float>>& samples){
   float optimizedNumberOfThreads = samples[0][0];
   float minTimeSpent = samples[0][1];
   for(int i = 0; i < samples.size(); i++){
@@ -86,6 +88,11 @@ void writeMinSampleToCSV(vector<vector<float>>& samples){
       optimizedNumberOfThreads = samples[i][0];
     }
   }
+  return optimizedNumberOfThreads;
+}
+
+
+void writeMinSampleToCSV(float optimizedNumberOfThreads){
   fstream minValueRecord;
   minValueRecord.open(MIN_CSV_FILE, ios::out | ios::app);
   minValueRecord << optimizedNumberOfThreads << '\n';
@@ -114,8 +121,9 @@ int main(int argc, char *argv[]){
     free(image); 
     free(fileBuffer); 
   }
-  // writeAllSamplesToCSV(sampleOutput);
-  writeMinSampleToCSV(sampleOutput);
+  writeAllSamplesToCSV(sampleOutput);
+  float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
+  writeMinSampleToCSV(optimizedNumberOfThreads);
   free(temporary);
   return 0;
 }
