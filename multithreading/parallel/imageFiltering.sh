@@ -1,6 +1,6 @@
 #!/bin/bash
 make clean
 make
-./ImageFilters.out ut.bmp
+./ImageFilters.out princes.bmp
 wait
 python3 plot.py

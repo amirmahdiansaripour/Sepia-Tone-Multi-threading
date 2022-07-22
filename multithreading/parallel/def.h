@@ -11,6 +11,7 @@
 #include <pthread.h>
 #include <math.h>
 #define CSV_FILE "samples.csv"
+#define MIN_CSV_FILE "optimized-number-of-threads.csv"
 using namespace std;
 using namespace std::chrono;
 
