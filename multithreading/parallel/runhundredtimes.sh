@@ -1,8 +1,10 @@
 #!/bin/bash
-make clean
-make
-rm results/*
-for i in {1..30}; do
-    ./ImageFilters.out palace-rotate.bmp; 
-    echo ${i} running done!
+for i in {1..4}; do
+    make clean
+    make
+    rm filteredImages/*
+    for j in {1..3}; do
+        ./ImageFilters.out inputs/${i}.bmp; 
+        echo ${j} running on inputs/${i}.bmp done!;
+    done
 done

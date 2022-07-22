@@ -84,7 +84,7 @@ char* readBMP24(const char *fileName){
     return buffer;
   }
   else{
-    cout << "File" << fileName << " doesn't exist!" << endl;
+    cout << "File " << fileName << " doesn't exist!" << endl;
     file.close();
     exit(0);
   }

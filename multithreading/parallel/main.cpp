@@ -1,7 +1,7 @@
 #include "def.h"
 
 long NUMBER_OF_THREADS;
-long MAX_NUMBER_OF_THREADS 200
+long MAX_NUMBER_OF_THREADS = 200;
 vector<ImageThread> imageThreads;
 
 void* thread_handler(void* threadId){
@@ -61,7 +61,7 @@ vector<float> runParallel(Image* image, char *fileBuffer, int bufferSize){
   auto start = high_resolution_clock::now();
   setThreadDimensions(image);
   handleThreads(image);
-  writeOutBmp24(fileBuffer, "results/output" + to_string(NUMBER_OF_THREADS) + ".bmp", bufferSize, *image);
+  writeOutBmp24(fileBuffer, "filteredImages/" + to_string(NUMBER_OF_THREADS) + "threads.bmp", bufferSize, *image);
   auto end = high_resolution_clock::now();
   auto duration = duration_cast<milliseconds>(end - start);
   // cout << "Time spent for: "  << NUMBER_OF_THREADS << "\t threads is "<< duration.count() << "\n";
