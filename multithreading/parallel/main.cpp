@@ -4,7 +4,7 @@ long NUMBER_OF_THREADS;
 long MAX_NUMBER_OF_THREADS = 200;
 vector<ImageThread> imageThreads;
 
-void* thread_handler(void* threadId){
+void* threadHandler(void* threadId){
   long index = (long)threadId;
   sepia(imageThreads[index]);
   sepia(imageThreads[index]);
@@ -40,7 +40,7 @@ void setThreadDimensions(Image* image){
 void handleThreads(Image* image){
   int created, joined;
   for(long i = 0; i < NUMBER_OF_THREADS; i++){
-    pthread_create(&imageThreads[i].thread, NULL, thread_handler, (void*)i);
+    pthread_create(&imageThreads[i].thread, NULL, threadHandler, (void*)i);
   }
   for(long j = 0; j < NUMBER_OF_THREADS; j++){
     pthread_join(imageThreads[j].thread, NULL);
@@ -121,9 +121,9 @@ int main(int argc, char *argv[]){
     free(image); 
     free(fileBuffer); 
   }
-  // writeAllSamplesToCSV(sampleOutput);
-  float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
-  writeMinSampleToCSV(optimizedNumberOfThreads);
+  writeAllSamplesToCSV(sampleOutput);
+  // float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
+  // writeMinSampleToCSV(optimizedNumberOfThreads);
   free(temporary);
   return 0;
 }
