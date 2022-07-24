@@ -2,6 +2,6 @@
 make clean
 make
 rm filteredImages/*
-./ImageFilters.out inputs/inputs2/inputs/6.bmp
+./ImageFilters.out inputs/1.bmp
 wait
 python3 plot.py

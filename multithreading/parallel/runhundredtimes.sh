@@ -1,6 +1,6 @@
 #!/bin/bash
 # rm optimized-number-of-threads.csv
-for i in {1..7}; do
+for i in {8..14}; do
     make clean
     make
     rm filteredImages/*
