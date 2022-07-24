@@ -121,9 +121,9 @@ int main(int argc, char *argv[]){
     free(image); 
     free(fileBuffer); 
   }
-  writeAllSamplesToCSV(sampleOutput);
-  // float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
-  // writeMinSampleToCSV(optimizedNumberOfThreads);
+  // writeAllSamplesToCSV(sampleOutput);
+  float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
+  writeMinSampleToCSV(optimizedNumberOfThreads);
   free(temporary);
   return 0;
 }
