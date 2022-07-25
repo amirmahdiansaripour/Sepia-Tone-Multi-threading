@@ -10,8 +10,9 @@
 #include <bits/stdc++.h>
 #include <pthread.h>
 #include <math.h>
-#define CSV_FILE "samples.csv"
-#define MIN_CSV_FILE "optimized-number-of-threads.csv"
+#define CSV_FILE "../samples.csv"
+#define MIN_CSV_FILE "../optimized-number-of-threads.csv"
+#define FILE_TO_PUT_THE_OUTPUT "parallelFiltering/"
 using namespace std;
 using namespace std::chrono;
 

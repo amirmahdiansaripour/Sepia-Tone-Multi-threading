@@ -1,16 +1,16 @@
 
-all: ImageFilters.out main.o sepia.o bitmap.o
+all: ParellelFiltering.out main.o sepia.o bitmap.o
 
-ImageFilters.out: sepia.o bitmap.o main.o
-	g++ -std=c++11 -pthread sepia.o bitmap.o main.o -o ImageFilters.out
+ParellelFiltering.out: sepia.o bitmap.o main.o
+	g++ -std=c++11 -pthread sepia.o bitmap.o main.o -o ParellelFiltering.out
 
-sepia.o : def.h sepia.cpp
-	g++ -std=c++11 -pthread -c sepia.cpp -o sepia.o
+sepia.o : ../filters/def.h ../filters/sepia.cpp
+	g++ -std=c++11 -pthread -c ../filters/sepia.cpp -o sepia.o
 
-bitmap.o : def.h bitmap.cpp
-	g++ -std=c++11 -pthread -c bitmap.cpp -o bitmap.o
+bitmap.o : ../filters/def.h ../filters/bitmap.cpp
+	g++ -std=c++11 -pthread -c ../filters/bitmap.cpp -o bitmap.o
 
-main.o: def.h main.cpp
+main.o: ../filters/def.h main.cpp
 	g++ -std=c++11 -pthread -c main.cpp  -o main.o
 
 clean:

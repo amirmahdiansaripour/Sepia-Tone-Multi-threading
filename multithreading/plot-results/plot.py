@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pds
 def plotRates():
-    dataFrame = pds.read_csv("samples.csv")
+    dataFrame = pds.read_csv("../samples.csv")
     min = dataFrame['x'][0]
     x = dataFrame['x'][1:]
     y = dataFrame['y'][1:]

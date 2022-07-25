@@ -1,6 +1,5 @@
 import pandas as pds
 import matplotlib.pyplot as plt
-import numpy as np
 
 outLierRatio = 0.005
 
@@ -20,7 +19,7 @@ def removeOutLiers(dataFrame):
 
 
 def showFrequencies():
-    dataFrame = pds.read_csv("optimized-number-of-threads.csv")
+    dataFrame = pds.read_csv("../optimized-number-of-threads.csv")
     keys, values = removeOutLiers(dataFrame)
     plt.figure(figsize=(100, 100))
     plt.bar(keys, values,width = 0.4)

@@ -2,7 +2,8 @@
 cd parallel
 make clean
 make
-rm filteredImages/*
-./ImageFilters.out inputs/16.bmp oneTime
+rm ParallelFiltering/*
+./ParellelFiltering.out ../inputs/1.bmp oneTime
 wait
+cd ../plot-results
 python3 plot.py
