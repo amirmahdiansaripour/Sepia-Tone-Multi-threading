@@ -2,10 +2,10 @@
 
 void getPixlesFromBMP24(int end, char *fileReadBuffer, Image &image){
   int rows = image.pixcels.size();
-  int cols = image.pixcels[0].size();
+  int columns = image.pixcels[0].size();
   int count = 1;
   for (int i = 0; i < rows; i++){
-    for (int j = cols - 1; j >= 0; j--){
+    for (int j = columns - 1; j >= 0; j--){
       for (int k = 0; k < 3; k++){
         switch (k){
         case 0:
@@ -25,7 +25,7 @@ void getPixlesFromBMP24(int end, char *fileReadBuffer, Image &image){
 
 void writeOutBmp24(char *fileBuffer, string nameOfFileToCreate, int bufferSize, Image &image){
   int rows = image.pixcels.size();
-  int cols = image.pixcels[0].size();
+  int columns = image.pixcels[0].size();
   ofstream write(nameOfFileToCreate);
   if (!write){
     cout << "Failed to write " << nameOfFileToCreate << endl;
@@ -33,7 +33,7 @@ void writeOutBmp24(char *fileBuffer, string nameOfFileToCreate, int bufferSize, 
   }
   int count = 1;
   for (int i = 0; i < rows; i++){
-    for (int j = cols - 1; j >= 0; j--){
+    for (int j = columns - 1; j >= 0; j--){
       for (int k = 0; k < 3; k++){
         switch (k){
         case 0:
@@ -64,9 +64,9 @@ vector<int> getFileSize(char* buffer){
   fileHeader = (PBITMAPFILEHEADER)(&buffer[0]);
   infoHeader = (PBITMAPINFOHEADER)(&buffer[0] + sizeof(BITMAPFILEHEADER));
   int rows = infoHeader->biHeight;
-  int cols = infoHeader->biWidth;
+  int columns = infoHeader->biWidth;
   int bufferSize = fileHeader->bfSize; 
-  return {rows, cols, bufferSize};
+  return {rows, columns, bufferSize};
 }
 
 char* readBMP24(const char *fileName){
@@ -84,7 +84,7 @@ char* readBMP24(const char *fileName){
     return buffer;
   }
   else{
-    cout << "File" << fileName << " doesn't exist!" << endl;
+    cout << "File " << fileName << " doesn't exist!" << endl;
     file.close();
     exit(0);
   }
