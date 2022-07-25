@@ -5,7 +5,7 @@ def plotRates():
     min = dataFrame['x'][0]
     x = dataFrame['x'][1:]
     y = dataFrame['y'][1:]
-    plt_1 = plt.figure(figsize=(100, 100))
+    plt.figure(figsize=(100, 100))
     plt.plot(x, y, marker='o', color='b')
     plt.xlabel("Number of threads")
     plt.ylabel("Time (ms)")

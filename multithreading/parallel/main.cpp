@@ -102,6 +102,7 @@ void writeMinSampleToCSV(float optimizedNumberOfThreads){
 int main(int argc, char *argv[]){
 
   char *fileName = argv[1];  
+  char* runSingleOrHundred = argv[2];
   char *temporary = readBMP24(fileName); 
   vector<int> fileDimensions = getFileSize(temporary);  
   int rows = fileDimensions[0];
@@ -121,9 +122,15 @@ int main(int argc, char *argv[]){
     free(image); 
     free(fileBuffer); 
   }
-  // writeAllSamplesToCSV(sampleOutput);
-  float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
-  writeMinSampleToCSV(optimizedNumberOfThreads);
+  if(runSingleOrHundred == "run single")
+    writeAllSamplesToCSV(sampleOutput);
+  else if(runSingleOrHundred == "run hundred"){
+    float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
+    writeMinSampleToCSV(optimizedNumberOfThreads);
+  }
+  else{
+    cout << "Wrong argument \n\n";    
+  }
   free(temporary);
   return 0;
 }
