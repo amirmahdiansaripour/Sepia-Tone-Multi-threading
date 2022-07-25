@@ -61,7 +61,7 @@ vector<float> runParallel(Image* image, char *fileBuffer, int bufferSize){
   auto start = high_resolution_clock::now();
   setThreadDimensions(image);
   handleThreads(image);
-  writeOutBmp24(fileBuffer, FILE_TO_PUT_THE_OUTPUT + to_string(NUMBER_OF_THREADS) + "threads.bmp", bufferSize, *image);
+  writeOutBmp24(fileBuffer, OUTPUT_FOLDER_PARALLEL + to_string(NUMBER_OF_THREADS) + "threads.bmp", bufferSize, *image);
   auto end = high_resolution_clock::now();
   auto duration = duration_cast<milliseconds>(end - start);
   // cout << "Time spent for: "  << NUMBER_OF_THREADS << "\t threads is "<< duration.count() << "\n";

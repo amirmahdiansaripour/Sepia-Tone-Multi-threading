@@ -12,7 +12,8 @@
 #include <math.h>
 #define CSV_FILE "../samples.csv"
 #define MIN_CSV_FILE "../optimized-number-of-threads.csv"
-#define FILE_TO_PUT_THE_OUTPUT "parallelFiltering/"
+#define OUTPUT_FOLDER_PARALLEL "parallelFiltering/"
+#define OUTPUT_FOLDER_SERIAL "serialFiltering/"
 using namespace std;
 using namespace std::chrono;
 

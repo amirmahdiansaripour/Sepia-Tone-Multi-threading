@@ -4,7 +4,7 @@
 #pragma once
 
 
-typedef int int;
+typedef int LONG;
 typedef unsigned short WORD;
 typedef unsigned int DWORD;
 
@@ -20,14 +20,14 @@ typedef struct tagBITMAPFILEHEADER
 typedef struct tagBITMAPINFOHEADER
 {
   DWORD biSize;
-  int biWidth;
-  int biHeight;
+  LONG biWidth;
+  LONG biHeight;
   WORD biPlanes;
   WORD biBitCount;
   DWORD biCompression;
   DWORD biSizeImage;
-  int biXPelsPerMeter;
-  int biYPelsPerMeter;
+  LONG biXPelsPerMeter;
+  LONG biYPelsPerMeter;
   DWORD biClrUsed;
   DWORD biClrImportant;
 } BITMAPINFOHEADER, *PBITMAPINFOHEADER;
