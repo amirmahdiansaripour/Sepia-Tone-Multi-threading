@@ -71,9 +71,20 @@ typedef struct ImageThread{
   vector<vector<Pixcel>> unprocessedImage;
 } ImageThread;
 
+void* threadHandler(void*);
+void setThreadDimensions(Image*);
+void handleThreads(Image*);
+void writeAllSamplesToCSV(vector<vector<float>>&);
+float getOptimizedNumberOfThreads(vector<vector<float>>&);
+vector<float> runParallel(Image*, char *, int);
+
 char* readBMP24(const char *);
-vector<int> getFileSize(char* buffer);
+vector<int> getFileSize(char*);
+vector<long> getDivedends(int);
 void getPixlesFromBMP24(int, char*, Image&);
+void writeAllSamplesToCSV(vector<vector<float>>&);
+float getOptimizedNumberOfThreads(vector<vector<float>>&);
+void writeMinSampleToCSV(float);
 void writeOutBmp24(char*, string, int, Image&);
 void setDefaultImage(vector<vector<Pixcel>>&);
 void blur(ImageThread &);

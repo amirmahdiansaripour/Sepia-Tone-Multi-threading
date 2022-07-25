@@ -1,10 +1,10 @@
 #include "def.h"
 
 long NUMBER_OF_THREADS;
-long MAX_NUMBER_OF_THREADS 200
+long MAX_NUMBER_OF_THREADS = 200;
 vector<ImageThread> imageThreads;
 
-void* thread_handler(void* threadId){
+void* threadHandler(void* threadId){
   long index = (long)threadId;
   sepia(imageThreads[index]);
   sepia(imageThreads[index]);
@@ -18,7 +18,7 @@ void setThreadDimensions(Image* image){
   int columns = image->pixcels[0].size();
   // cout << "rows\t" << rows << "\tcolumns\t" << columns << "\n"; 
   if(rows % NUMBER_OF_THREADS != 0){
-    cout << "Can not divide image to equally squared segments\n";
+    cout << "Can not divide image to equal-width segments\n";
     exit(0);
   }
   int offset = rows / NUMBER_OF_THREADS;
@@ -40,7 +40,7 @@ void setThreadDimensions(Image* image){
 void handleThreads(Image* image){
   int created, joined;
   for(long i = 0; i < NUMBER_OF_THREADS; i++){
-    pthread_create(&imageThreads[i].thread, NULL, thread_handler, (void*)i);
+    pthread_create(&imageThreads[i].thread, NULL, threadHandler, (void*)i);
   }
   for(long j = 0; j < NUMBER_OF_THREADS; j++){
     pthread_join(imageThreads[j].thread, NULL);
@@ -61,25 +61,25 @@ vector<float> runParallel(Image* image, char *fileBuffer, int bufferSize){
   auto start = high_resolution_clock::now();
   setThreadDimensions(image);
   handleThreads(image);
-  writeOutBmp24(fileBuffer, "results/output" + to_string(NUMBER_OF_THREADS) + ".bmp", bufferSize, *image);
+  writeOutBmp24(fileBuffer, "filteredImages/" + to_string(NUMBER_OF_THREADS) + "threads.bmp", bufferSize, *image);
   auto end = high_resolution_clock::now();
   auto duration = duration_cast<milliseconds>(end - start);
   // cout << "Time spent for: "  << NUMBER_OF_THREADS << "\t threads is "<< duration.count() << "\n";
   return {(float) NUMBER_OF_THREADS, (float)duration.count()};
 }
 
-void writeAllSamplesToCSV(vector<vector<float>>& samples){
+void writeAllSamplesToCSV(const vector<vector<float>>& samples, float optimizedNumOfThreads){
   ofstream recordsFile;
   recordsFile.open(CSV_FILE);
   recordsFile << "x,y\n";
-  recordsFile << getOptimizedNumberOfThreads(samples) << "\n";
+  recordsFile << optimizedNumOfThreads << "\n";
   for(vector<float> row : samples){
     recordsFile << row[0] << "," << row[1] << "\n";
   }
   recordsFile.close();
 }
 
-float getOptimizedNumberOfThreads(vector<vector<float>>& samples){
+float getOptimizedNumberOfThreads(const vector<vector<float>>& samples){
   float optimizedNumberOfThreads = samples[0][0];
   float minTimeSpent = samples[0][1];
   for(int i = 0; i < samples.size(); i++){
@@ -99,9 +99,24 @@ void writeMinSampleToCSV(float optimizedNumberOfThreads){
   minValueRecord.close();
 }
 
-int main(int argc, char *argv[]){
+void writeToCSV(const char *runSingleOrHundred, const vector<vector<float>> &sampleOutput){
+  string temp = runSingleOrHundred;
+  float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
+  if(temp == "oneTime"){
 
+    writeAllSamplesToCSV(sampleOutput, optimizedNumberOfThreads);
+  }
+  else if(temp == "hundredTimes"){
+    writeMinSampleToCSV(optimizedNumberOfThreads);
+  }
+  else{
+    cout << "Wrong argument \n\n";    
+  }
+}
+
+int main(int argc, char *argv[]){
   char *fileName = argv[1];  
+  char* runSingleOrHundred = argv[2];
   char *temporary = readBMP24(fileName); 
   vector<int> fileDimensions = getFileSize(temporary);  
   int rows = fileDimensions[0];
@@ -121,9 +136,7 @@ int main(int argc, char *argv[]){
     free(image); 
     free(fileBuffer); 
   }
-  writeAllSamplesToCSV(sampleOutput);
-  float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
-  writeMinSampleToCSV(optimizedNumberOfThreads);
+  writeToCSV(runSingleOrHundred, sampleOutput);
   free(temporary);
   return 0;
 }
