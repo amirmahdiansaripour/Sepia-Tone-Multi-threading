@@ -68,18 +68,18 @@ vector<float> runParallel(Image* image, char *fileBuffer, int bufferSize){
   return {(float) NUMBER_OF_THREADS, (float)duration.count()};
 }
 
-void writeAllSamplesToCSV(vector<vector<float>>& samples){
+void writeAllSamplesToCSV(const vector<vector<float>>& samples, float optimizedNumOfThreads){
   ofstream recordsFile;
   recordsFile.open(CSV_FILE);
   recordsFile << "x,y\n";
-  recordsFile << getOptimizedNumberOfThreads(samples) << "\n";
+  recordsFile << optimizedNumOfThreads << "\n";
   for(vector<float> row : samples){
     recordsFile << row[0] << "," << row[1] << "\n";
   }
   recordsFile.close();
 }
 
-float getOptimizedNumberOfThreads(vector<vector<float>>& samples){
+float getOptimizedNumberOfThreads(const vector<vector<float>>& samples){
   float optimizedNumberOfThreads = samples[0][0];
   float minTimeSpent = samples[0][1];
   for(int i = 0; i < samples.size(); i++){
@@ -99,8 +99,22 @@ void writeMinSampleToCSV(float optimizedNumberOfThreads){
   minValueRecord.close();
 }
 
-int main(int argc, char *argv[]){
+void writeToCSV(const char *runSingleOrHundred, const vector<vector<float>> &sampleOutput){
+  string temp = runSingleOrHundred;
+  float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
+  if(temp == "oneTime"){
 
+    writeAllSamplesToCSV(sampleOutput, optimizedNumberOfThreads);
+  }
+  else if(temp == "hundredTimes"){
+    writeMinSampleToCSV(optimizedNumberOfThreads);
+  }
+  else{
+    cout << "Wrong argument \n\n";    
+  }
+}
+
+int main(int argc, char *argv[]){
   char *fileName = argv[1];  
   char* runSingleOrHundred = argv[2];
   char *temporary = readBMP24(fileName); 
@@ -122,17 +136,7 @@ int main(int argc, char *argv[]){
     free(image); 
     free(fileBuffer); 
   }
-  cout << runSingleOrHundred << "\n"; 
-  if(runSingleOrHundred == "oneTime"){
-    writeAllSamplesToCSV(sampleOutput);
-  }
-  else if(runSingleOrHundred == "hundredTimes"){
-    float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
-    writeMinSampleToCSV(optimizedNumberOfThreads);
-  }
-  else{
-    cout << "Wrong argument \n\n";    
-  }
+  writeToCSV(runSingleOrHundred, sampleOutput);
   free(temporary);
   return 0;
 }
