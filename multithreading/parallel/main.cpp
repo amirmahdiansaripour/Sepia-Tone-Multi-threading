@@ -18,7 +18,7 @@ void setThreadDimensions(Image* image){
   int columns = image->pixcels[0].size();
   // cout << "rows\t" << rows << "\tcolumns\t" << columns << "\n"; 
   if(rows % NUMBER_OF_THREADS != 0){
-    cout << "Can not divide image to equally squared segments\n";
+    cout << "Can not divide image to equal-width segments\n";
     exit(0);
   }
   int offset = rows / NUMBER_OF_THREADS;
@@ -122,9 +122,11 @@ int main(int argc, char *argv[]){
     free(image); 
     free(fileBuffer); 
   }
-  if(runSingleOrHundred == "run single")
+  cout << runSingleOrHundred << "\n"; 
+  if(runSingleOrHundred == "oneTime"){
     writeAllSamplesToCSV(sampleOutput);
-  else if(runSingleOrHundred == "run hundred"){
+  }
+  else if(runSingleOrHundred == "hundredTimes"){
     float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
     writeMinSampleToCSV(optimizedNumberOfThreads);
   }
