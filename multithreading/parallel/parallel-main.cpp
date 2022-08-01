@@ -68,11 +68,10 @@ vector<float> runParallel(Image* image, char *fileBuffer, int bufferSize){
   return {(float) NUMBER_OF_THREADS, (float)duration.count()};
 }
 
-void writeAllSamplesToCSV(const vector<vector<float>>& samples, float optimizedNumOfThreads){
+void writeAllSamplesToCSV(const vector<vector<float>>& samples){
   ofstream recordsFile;
   recordsFile.open(CSV_FILE);
   recordsFile << "x,y\n";
-  recordsFile << optimizedNumOfThreads << "\n";
   for(vector<float> row : samples){
     recordsFile << row[0] << "," << row[1] << "\n";
   }
@@ -101,12 +100,11 @@ void writeMinSampleToCSV(float optimizedNumberOfThreads){
 
 void writeToCSV(const char *runSingleOrHundred, const vector<vector<float>> &sampleOutput){
   string temp = runSingleOrHundred;
-  float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
   if(temp == "oneTime"){
-
-    writeAllSamplesToCSV(sampleOutput, optimizedNumberOfThreads);
+    writeAllSamplesToCSV(sampleOutput);
   }
   else if(temp == "hundredTimes"){
+    float optimizedNumberOfThreads = getOptimizedNumberOfThreads(sampleOutput);
     writeMinSampleToCSV(optimizedNumberOfThreads);
   }
   else{
