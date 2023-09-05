@@ -1,11 +1,12 @@
 #!/bin/bash
 # rm optimized-number-of-threads.csv
-for i in {8..14}; do
+cd parallel
+for i in {21..25}; do
     make clean
     make
-    rm filteredImages/*
+    rm parallelFiltering/*
     for j in {1..100}; do
-        ./ImageFilters.out inputs/${i}.bmp; 
+        ./ParellelFiltering.out ../inputs/${i}.bmp hundredTimes
         if (($j == 1)); then
             echo ${j} running on inputs/${i}.bmp done!;
         else 
@@ -13,4 +14,5 @@ for i in {8..14}; do
         fi
     done
 done
+cd ../plot-results
 python3 histogram.py
