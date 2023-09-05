@@ -2,7 +2,7 @@
 
 Finding the efficient number of threads to apply sepia tone on a bitmap image.
 
-I used the concept of multi-threading and segmented an input bitmap image to apply the sepia transform in parallel on each segment. Multi-threading (parallelization) results in faster outputs, compared to the serial case, provided that the number of threads is not extravagantly high. When the number of threads is excessilvely high, for each thread, the execution time becomes smaller than the joining time (a thread's duration of creation and termination).
+I used the concept of multi-threading and segmented an input bitmap image to apply the sepia transform in parallel. Multi-threading (parallelization) results in faster outputs, compared to the serial case, provided that the number of threads is not extravagantly high. When the number of threads is excessilvely high, for each thread, the execution time becomes smaller than the joining time (a thread's duration of creation and termination).
 
 
 ## How to Run:
